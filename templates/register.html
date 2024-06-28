@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" type="image/x-icon" href="https://i.ytimg.com/vi/h_Z01mSNY_o/maxresdefault.jpg">
+    <title>AMT(Airowire Management tool)</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>AMT Register</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://wallpapercave.com/wp/wp3272754.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* Optional: Adjust the background size */
+            /* Add other CSS styles as needed */
+        }
+
+        .card {
+            max-width: 500px; /* Set maximum width for the card */
+            margin: 70px auto; /* Center the card */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-body">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <img src="https://yt3.googleusercontent.com/ovOpbEcyCAtssPVkP7ehLJdtL9yciOBCWTl1OKGT8qnC640QGyZX85073CMCgHU5HYFSzXpJ0g=s900-c-k-c0x00ffffff-no-rj" class="img-fluid mb-4" alt="Logo" width="100px">
+                        </div>
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4"> New User ?</h1>
+                        </div>
+                        <form class="user" action="{{ url_for('register') }}" method="post">
+                            {% if message is defined and message %}
+                            <div class="alert alert-warning">{{ message }}</div>
+                            {% endif %}
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="User Name" name="uname">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email">
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" name="password">
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" name="repassword">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <select name="tname" class="form-control" style="border-radius: 50px;height: 50px;">
+                                    <option disabled>Select Team</option>
+                                    <option value="noc">NOC</option>
+                                    <option value="hr">HR</option>
+                                    <option value="operation">Operation</option>
+                                    <option value="project">Project</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="sales">Sales</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select name="designation" class="form-control" style="border-radius: 50px;height: 50px;">
+                                    <option disabled>Select Designation</option>
+                                    <option value="Network_Engineer">Network Engineer</option>
+                                    <option value="Senior_Network_Engineer">Senior Network Engineer</option>
+                                    <option value="Technical_Associate">Technical Associate</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-user btn-block">Register</button>
+                        </form>
+                        <hr>
+                        <div class="text-center">
+                            <a class="small" href="{{url_for('login')}}">Already have an account? Login!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+</body>
+
+</html>
+

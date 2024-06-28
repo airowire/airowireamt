@@ -1,0 +1,206 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if session['tname'] == 'operation'  %}
+  {% extends 'sidebar.html' %}
+  {% block content %}
+   
+  <div class="modal" tabindex="-1" role="dialog" id="editModal" >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Additional Details Modal</h5>
+	   
+        </div>
+        <div class="modal-body">
+	{% for data in sidata %}
+                    
+	 <div class="row">
+		 <div class="col-lg-4">
+			 <div class="card bg-primary text-white">
+				 <div class="card-header">
+					 <p> Customer Name </p>
+				 </div>
+				 <div class="card-body">
+			  <p> {{ data[1] }}</p>
+				 </div>
+			 </div>
+		 </div>
+		 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Customer POC  Name </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[2] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+		 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Customer Phone No </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[3] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+
+         </div>
+	<br><br>
+	 <div class="row">
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Customer Email  </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[4] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Start Date </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[5] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> End Date </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[6] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+
+	 </div><br><br>
+          <div class="row">
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Requestor Email  </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[7] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Material </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[8] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Part Number </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[9] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+
+
+         </div>
+	 <br><br>
+	 <div class="row">
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Quantity  </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[10] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Status </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[11] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+                 <div class="col-lg-4">
+                         <div class="card bg-primary text-white">
+                                 <div class="card-header">
+                                         <p> Serial Number </p>
+                                 </div>
+                                 <div class="card-body">
+                          <p> {{ data[12] }}</p>
+                                 </div>
+                         </div>
+                 </div>
+
+
+         </div>
+	
+
+
+
+                {% endfor %}
+      </div>
+      <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" id="closeModalButton" data-bs-dismiss="modal">Close</button>
+</div>
+
+    </div>
+  </div>
+  
+ <script>
+    // JavaScript code to show the modal automatically
+    window.addEventListener('DOMContentLoaded', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('editModal'));
+        myModal.show();
+    });
+
+    // JavaScript code to handle modal close event and redirection
+    document.getElementById('closeModalButton').addEventListener('click', function () {
+        // Redirect to another page
+        window.location.href = "/elapprove"; // Replace "/other_page" with your desired page URL
+    });
+</script>
+ 
+ 
+
+
+
+
+  {% endblock %}
+  
+         
+{% else %}
+<script>
+ // Display a SweetAlert message and logout after 5 seconds
+ window.onload = function() {
+     Swal.fire({
+         title: 'Access Denied!',
+         text: 'You are not allowed to view this page.',
+         icon: 'warning',
+         timer: 5000, // Automatically close the alert after 5 seconds
+         timerProgressBar: true,
+         showConfirmButton: false
+     }).then((result) => {
+         // Redirect to logout page after the alert is closed
+         if (result.dismiss === Swal.DismissReason.timer) {
+             window.location.href = "/logout";
+         }
+     });
+ };
+</script>
+{% endif %}

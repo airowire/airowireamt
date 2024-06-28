@@ -1,0 +1,8 @@
+__pycache__/
+venv/
+.app.py.swl
+.app.py.swm
+.app.py.swn
+.app.py.swo
+.app.py.swp
+

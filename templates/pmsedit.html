@@ -1,0 +1,105 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if session['tname'] == 'project' and session['type'] == 'manager'  %}
+{% extends 'sidebar.html' %}
+{% block content %}
+<div class="container-fluid">
+<div class="card mb-4">
+    <div class="card-header">
+        <div class="row">
+        <div class="col-lg-6 text-left">
+            <i class="fas fa-table me-1"></i>
+        PMS List
+        </div>
+                
+        </div>   
+    </div>
+
+</div>
+{% if ndata %}
+
+<table class="table table-bordered">
+  <thead>
+      <tr>
+          <th>Name</th>
+          <th>KRA</th>
+          <th>Weightage</th>
+          <th>Jan</th>
+          <th>Feb</th>
+          <th>Mar</th>
+          <th>April</th>
+          <th>May</th>
+          <th>June</th>
+          <th>July</th>
+          <th>Aug</th>
+          <th>Sept</th>
+          <th>Oct</th>
+          <th>Nov</th>
+          <th>Dec</th>
+          <th>Edit</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for row in ndata %}
+          <tr>
+              {% if loop.first %}
+                  <td rowspan="{{ rows|length }}">{{ row[1] }}</td>
+              {% endif %}
+              <td>{{ row[2] }}</td>
+              {% if row[2] == 'Comments' or row[2] == 'Technical comments' or row[2] == 'Executive comments' %}
+                                <td >{{ row[3] }} </td>
+                            
+                            {% elif row[2] == 'Total Percentage' %}
+
+                            
+                            
+                            <td> 
+                                {% for xyz in sumn %}
+                                {{ xyz[0] }}
+                                {% endfor %}%
+                            </td>
+                          
+                            {% else %}
+                                <td> {{ row[3] }} %</td>
+                            {% endif %}
+              
+              <td>{{ row[4] }}</td>
+              <td>{{ row[5] }}</td>
+              <td>{{ row[6] }}</td>
+              <td>{{ row[7] }}</td>
+              <td>{{ row[8] }}</td>
+              <td>{{ row[9] }}</td>
+              <td>{{ row[10] }}</td>
+              <td>{{ row[11] }}</td>
+              <td>{{ row[12] }}</td>
+              <td>{{ row[13] }}</td>
+              <td>{{ row[14] }}</td>
+              <td>{{ row[15] }}</td>
+              <td><a href="pms_edit?id={{ row[0] }}" style="text-decoration: none;"><i class="fas fa-edit"></i></a></td>
+          </tr>
+      {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+</div>
+{% endblock %}
+       
+{% else %}
+<script>
+ // Display a SweetAlert message and logout after 5 seconds
+ window.onload = function() {
+     Swal.fire({
+         title: 'Access Denied!',
+         text: 'You are not allowed to view this page.',
+         icon: 'warning',
+         timer: 5000, // Automatically close the alert after 5 seconds
+         timerProgressBar: true,
+         showConfirmButton: false
+     }).then((result) => {
+         // Redirect to logout page after the alert is closed
+         if (result.dismiss === Swal.DismissReason.timer) {
+             window.location.href = "/logout";
+         }
+     });
+ };
+</script>
+{% endif %}

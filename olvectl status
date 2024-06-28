@@ -1,0 +1,24 @@
+[0;1;32m●[0m systemd-resolved.service - Network Name Resolution
+     Loaded: loaded (/lib/systemd/system/systemd-resolved.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Tue 2024-05-21 04:09:23 UTC; 5s ago
+       Docs: man:systemd-resolved.service(8)
+             man:org.freedesktop.resolve1(5)
+             https://www.freedesktop.org/wiki/Software/systemd/writing-network-configuration-managers
+             https://www.freedesktop.org/wiki/Software/systemd/writing-resolver-clients
+   Main PID: 233885 (systemd-resolve)
+     Status: "Processing requests..."
+      Tasks: 1 (limit: 28699)
+     Memory: 1.6M
+        CPU: 281ms
+     CGroup: /system.slice/systemd-resolved.service
+             └─233885 /lib/systemd/systemd-resolved
+
+May 21 04:09:23 amtapp systemd[1]: Starting Network Name Resolution...
+May 21 04:09:23 amtapp systemd-resolved[233885]: Positive Trust Anchors:
+May 21 04:09:23 amtapp systemd-resolved[233885]: . IN DS 20326 8 2 e06d44b80b8f1d39a95c0b0d7c65d08458e880409bbc683457104237c7f8ec8d
+May 21 04:09:23 amtapp systemd-resolved[233885]: Negative trust anchors: home.arpa 10.in-addr.arpa 16.172.in-addr.arpa 17.172.in-addr.arpa 18.172.in-addr.arpa 19.172.in-addr.arpa 20.172.in-addr.arpa 21.172.in-addr.arpa 22.172.in-addr.arpa 23.172.in-addr.arpa 24.172.in-addr.arpa 25.172.in-addr.arpa 26.172.in-addr.arpa 27.172.in-addr.arpa 28.172.in-addr.arpa 29.172.in-addr.arpa 30.172.in-addr.arpa 31.172.in-addr.arpa 168.192.in-addr.arpa d.f.ip6.arpa corp home internal intranet lan local private test
+May 21 04:09:23 amtapp systemd-resolved[233885]: [0;1;31m[0;1;39m[0;1;31mFailed to open configuration file '/etc/systemd/resolved.conf': Permission denied[0m
+May 21 04:09:23 amtapp systemd-resolved[233885]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mFailed to parse configuration file: Permission denied[0m
+May 21 04:09:23 amtapp systemd-resolved[233885]: Using system hostname 'amtapp'.
+May 21 04:09:23 amtapp systemd-resolved[233885]: [0;1;38;5;185m[0;1;39m[0;1;38;5;185mFailed to stat /etc/resolv.conf: Permission denied[0m
+May 21 04:09:23 amtapp systemd[1]: Started Network Name Resolution.

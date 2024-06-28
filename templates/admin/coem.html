@@ -1,0 +1,131 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if session['email'] == 'admin@gmail.com' %}
+{% extends '/admin/sidebar.html' %}
+{% block content %}
+
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h6 class=" mb-0 text-black">CERTS OEM DASHBOARD</h6>
+        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header" >
+                                    <i class="fas fa-table me-1"></i>
+                                    Add OEM & Certs
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <form action="{{ url_for('oemadd') }}" method="post" >
+                                            <label>Enter  Certificate Name</label><br>
+                                            <textarea name="cname" required class="form-control" rows="1" cols="4">
+
+                                            </textarea>
+
+                                        </div>
+                <div class="col-lg-2">
+
+
+                        <label>Enter OEM</label><br>
+    <input type="text" name="oem"  class="form-control" required >
+                    <br>
+
+	</div>
+     <div class="col-lg-2">
+
+
+                        <label>Enter Cost</label><br>
+    <input type="number" name="cost"  class="form-control" required >
+                    <br>
+
+        </div>
+    <div class="col-lg-2">
+			 <label>Submit</label><br>
+                    <button class="form-control btn btn-danger">Add Certs</button>
+                    </form>
+                </div>
+        </div>
+        </div>
+            </div><br>
+            <div class="card mb-4" >
+                                <div class="card-header" style="">
+
+                                            <i class="fas fa-table me-1"></i>
+                                    Payout List
+
+                                </div>
+                                <div class="card-body" >
+                                    <table id="datatablesSimple" class="table table-striped" >
+                                        <thead>
+                                            <tr>
+
+                                                <th >Certificate Name</th>
+                                                <th >OEM</th>
+						<th> Cost </th>
+                                                <th>Action</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+						 <tr>
+
+                                                <th>Certificate Name</th>
+                                                <th>OEM</th>
+						<th> Cost </th>
+                                                <th>Action</th>
+
+
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            {% for row in data %}
+        <tr>
+            <td class="text-left">{{ row[1] }}</td>
+            <td class="text-left">{{ row[2] }}</td>
+	     <td class="text-left">{{ row[3] }}</td>
+	    <td class="text-left"> 
+		    <a href="/eoem?id={{ row[0] }}" class="btn btn-primary">Edit</a>
+		     <a href="/doem?id={{ row[0] }}" class="btn btn-danger">Delete</a>
+	    </td>
+
+
+
+
+        </tr>
+	<!-- Modal -->
+<!-- Modal -->
+
+        {% endfor %}
+                                        </tbody>
+
+
+                                    </table>
+                                </div>
+</div>
+
+
+{% endblock %}
+
+{% else %}
+<script>
+ // Display a SweetAlert message and logout after 5 seconds
+ window.onload = function() {
+     Swal.fire({
+         title: 'Access Denied!',
+         text: 'You are not allowed to view this page.',
+         icon: 'warning',
+         timer: 5000, // Automatically close the alert after 5 seconds
+         timerProgressBar: true,
+         showConfirmButton: false
+     }).then((result) => {
+         // Redirect to logout page after the alert is closed
+         if (result.dismiss === Swal.DismissReason.timer) {
+             window.location.href = "/logout";
+         }
+     });
+ };
+</script>
+{% endif %}
+

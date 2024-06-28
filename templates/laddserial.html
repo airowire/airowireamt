@@ -1,0 +1,58 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if session['tname'] == 'operation' %}
+{% extends 'sidebar.html' %}
+{% block content %}
+<script src="{{ url_for('static', filename='js/multiselect-dropdown.js') }}"></script>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    Serial Modal
+                </div>
+                <div class="card-body">
+			<form action="/elabapprove" method="POST">
+    <input type="hidden" name="tno" value="{{ tno }}">
+    {% for material, serial_numbers in material_serial_dict.items() %}
+    <div class="form-group">
+        <label for="serialNumber">Select Serial Number(s) For {{ material }}</label>
+	<select name="serialNumber" multiple multiselect-search="true" class="form-control">
+            {% for serial_number in serial_numbers %}
+            <option value="{{ serial_number }}">{{ serial_number }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    {% endfor %}
+    <button type="submit" name="submit" class="btn btn-danger form-control">Approve</button>
+</form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% else %}
+<script>
+ // Display a SweetAlert message and logout after 5 seconds
+ window.onload = function() {
+     Swal.fire({
+         title: 'Access Denied!',
+         text: 'You are not allowed to view this page.',
+         icon: 'warning',
+         timer: 5000, // Automatically close the alert after 5 seconds
+         timerProgressBar: true,
+         showConfirmButton: false
+     }).then((result) => {
+         // Redirect to logout page after the alert is closed
+         if (result.dismiss === Swal.DismissReason.timer) {
+             window.location.href = "/logout";
+         }
+     });
+ };
+</script>
+{% endif %}
