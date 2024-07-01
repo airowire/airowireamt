@@ -12,10 +12,8 @@ node {
     stage('Test') {
         script {
             app.inside {
-                // List the contents of the current directory to verify the path
                 sh 'ls -al'
-                // Run the tests individually since they are in the root directory
-                sh 'python3 -m unittest app.py'
+                sh 'python3 -m unittest discover -s tests'
             }
         }
     }
