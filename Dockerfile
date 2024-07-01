@@ -16,7 +16,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Install dependencies
 COPY requirements.txt .
@@ -29,4 +29,5 @@ COPY . .
 # Expose the port to listen on (set a default port)
 EXPOSE 5000
 
+# Run the application
 CMD ["python", "./app.py"]
