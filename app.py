@@ -49,9 +49,9 @@ app = Flask(__name__)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'airowire'
-app.config['MYSQL_PASSWORD'] = 'Airowire@123'
+app.config['MYSQL_HOST'] = '10.98.104.253:3306'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
 app.config['MYSQL_DB'] = 'amt'
 
 mysql = MySQL(app)
