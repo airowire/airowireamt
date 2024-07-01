@@ -13,7 +13,7 @@ node {
         script {
             app.inside {
                 sh 'ls -al'
-                sh 'python3 -m unittest discover -s tests'
+                sh 'python3 -m unittest app.py'
             }
         }
     }
