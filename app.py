@@ -1,7 +1,10 @@
 import csv
 import io
+import os
 from flask import Flask, Response, jsonify, render_template, request, redirect, url_for, session ,flash
 import pandas as pd
+from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash,generate_password_hash
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -45,14 +48,16 @@ app = Flask(__name__)
 
 #apm = ElasticAPM(app)
 
-
-
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.98.104.253'
+app.config['MYSQL_HOST'] = '10.98.104.253' #10.98.104.253
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
+app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
 app.config['MYSQL_DB'] = 'amt'
+
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 
 mysql = MySQL(app)
 
@@ -209,6 +214,7 @@ def register():
     elif request.method == 'POST':
         message = 'Please fill out the form !'
     return render_template('register.html', message=message)
+
 
 
 #user payout list
@@ -678,16 +684,6 @@ def pmsedit():
     return render_template('pmsedit.html',ndata=ndata,sumn=sumn)
 
 
-
-
-
-
-
-
-
-
-
-
 @app.route('/payoutadd',methods=['GET', 'POST'])
 def payoutadd():
     if request.method == 'POST' and 'date' in request.form and 'remarks' in request.form \
@@ -865,6 +861,7 @@ def lapprove():
     if 'loggedin' in session:
         return render_template('lapprove.html',grouped_data=grouped_data)
     return redirect('/login')  
+
 
 @app.route('/labadd',methods=['GET', 'POST'])
 def labadd():
@@ -2699,6 +2696,7 @@ def update_data():
             </script>
         """
 
+
 @app.route('/doem')
 def doem():
     if 'loggedin' in session:
@@ -2798,6 +2796,112 @@ def scheduled_task_15_days():
 def scheduled_task_12_hours():
     with app.app_context():
         query_and_send_emails_hours(12)
+
+
+
+
+# Developed by Sagar
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    category=None
+    message = None
+
+    # edit details handle 
+    if request.method == 'POST':
+        # Update profile information
+        name = request.form.get('name')
+        email = request.form.get('email')
+        
+        try:
+            cur.execute('UPDATE user SET uname = %s, email = %s WHERE id = %s', (name, email, user_id))
+            mysql.connection.commit()
+            message = ('Profile information updated successfully!', 'success')
+        except Exception as e:
+            message = (f'Error updating profile information: {str(e)}', 'danger')
+
+    # for handling the photo upload function
+    if request.method == 'POST':
+        # Photo Upload
+        if 'photo' in request.files:
+            photo = request.files['photo']
+            if photo.filename != '' and allowed_file(photo.filename):
+                filename = secure_filename(photo.filename)
+                try:
+                    photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    cur.execute('UPDATE user SET photo = %s WHERE id = %s', (filename, user_id))
+                    mysql.connection.commit()
+                    message = 'Profile photo updated successfully!', 'success'
+                    # Notify user via email (optional)
+                    cert_email('Profile Photo Updated', f'Your profile photo has been updated.', 'user@example.com')
+                except Exception as e:
+                    # Handle database or file saving errors
+                    message = f'Error uploading photo: {str(e)}', 'danger'
+            else:
+                message = 'Invalid photo format or no photo selected', 'danger'
+
+        # Password Update
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([ new_password, confirm_password]):
+         message = 'Please fill out all password fields', 'danger'
+    elif new_password != confirm_password:
+        message = 'New Password and Confirm Password do not match', 'danger'
+    else:
+        try:
+            cur.execute('SELECT password FROM user WHERE id = %s', (user_id,))
+            user = cur.fetchone()
+            hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            cur.execute('UPDATE user SET password = %s WHERE id = %s', (hashed_password, user_id))
+            mysql.connection.commit()
+            message = 'Password updated successfully!', 'success'
+                    # Notify user via email (optional)
+
+                
+        except Exception as e:
+                # Handle database errors
+            message = f'Error updating password: {str(e)}', 'danger'
+
+    cur.execute('SELECT * FROM user WHERE id = %s', (user_id,))
+    data = cur.fetchone()
+    cur.close()
+
+    return render_template('profile.html', data=data, message=message)
+
+@app.route('/upload_photo', methods=['POST'])
+def upload_photo():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['id']
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    if 'photo' in request.files:
+        photo = request.files['photo']
+        if photo.filename != '' and allowed_file(photo.filename):
+            filename = secure_filename(photo.filename)
+            try:
+                photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                cur.execute('UPDATE user SET photo = %s WHERE id = %s', (filename, user_id))
+                mysql.connection.commit()
+                flash('Profile photo updated successfully!', 'success')
+            except Exception as e:
+                flash(f'Error uploading photo: {str(e)}', 'danger')
+        else:
+            flash('Invalid photo format or no photo selected', 'danger')
+    cur.close()
+    return redirect(url_for('profile'))
+
+
+
 
 if __name__ == "__main__":
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
