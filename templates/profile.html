@@ -1,0 +1,176 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% if session['type'] == 'manager' and session['tname'] == 'project' %}
+{% extends 'sidebar.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Anton+SC&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-buttons button">
+                    <h4>MY PROFILE </h4>
+                </div>
+                <div class="profile-buttons">
+                    <button class="button" data-toggle="modal" data-target="#changePasswordModal">
+                        <i class="fas fa-edit"></i> &nbsp; Password
+                    </button>
+                    <button type="button" id="edit-button" class="button"><i class="fas fa-edit"></i>&nbsp;Edit
+                    </button>
+                </div>
+            </div>
+            <div class="profile-content">
+                <div class="profile-pic">
+                    <img src="{{ url_for('static', filename='uploads/' + data['photo']) if data['photo'] else url_for('static', filename='img/undraw_profile.svg') }}"
+                        data-toggle="modal" data-target="#changeProfilePicModal" alt="Profile Picture">
+                </div>
+                <div class="profile-info">
+                    <form id="profile-info-form" method="POST" action="{{ url_for('profile') }}">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Name</strong></td>
+                                <td>
+                                    <span id="name-text">{{ data['uname'] }}</span>
+                                    <input type="text" id="name-input" name="name" class="form-control d-none"
+                                        value="{{ data['uname'] }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email Address</strong></td>
+                                <td>
+                                    <span id="email-text">{{ data['email'] }}</span>
+                                    <input type="email" id="email-input" name="email" class="form-control d-none"
+                                        value="{{ data['email'] }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Team</strong></td>
+                                <td>{{ data['tname'] }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Designation</strong></td>
+                                <td>{{ data['designation'] }}</td>
+                            </tr>
+                        </table>
+
+                        <button type="submit" id="save-button" class="button d-none">Save</button>
+                        <button type="button" id="cancel-button" class="button d-none">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"
+        aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <div class="form-group">
+                            <label for="new_password">New Password</label>
+                            <input type="password" class="form-control" id="new_password" name="new_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                required>
+                        </div>
+                        <button type="submit" class="button">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Profile Picture Modal -->
+    <div class="modal fade" id="changeProfilePicModal" tabindex="-1" role="dialog"
+        aria-labelledby="changeProfilePicModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeProfilePicModalLabel">Change Profile Picture</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{{ url_for('upload_photo') }}" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="photo">Choose Photo</label>
+                            <input type="file" class="form-control-file" id="photo" name="photo" accept="image/*"
+                                required>
+                        </div>
+                        <button type="submit" class="button">Upload Photo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#edit-button').click(function () {
+                $('#name-text, #email-text').addClass('d-none');
+                $('#name-input, #email-input, #save-button, #cancel-button').removeClass('d-none');
+                $(this).addClass('d-none');
+            });
+
+            $('#cancel-button').click(function () {
+                $('#name-text, #email-text').removeClass('d-none');
+                $('#name-input, #email-input, #save-button, #cancel-button').addClass('d-none');
+                $('#edit-button').removeClass('d-none');
+            });
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}
+
+{% else %}
+<script>
+    window.onload = function () {
+        Swal.fire({
+            title: 'Access Denied!',
+            text: 'You are not allowed to view this page.',
+            icon: 'warning',
+            timer: 5000,
+            timerProgressBar: true,
+            showConfirmButton: false
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.timer) {
+                window.location.href = "/logout";
+            }
+        });
+    };
+</script>
+{% endif %}
