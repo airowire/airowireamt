@@ -8,3 +8,4 @@ flask_apscheduler==1.13.0
 simplejson==3.18.4
 flask_mysqldb==0.2.0
 numpy==1.23.1
+elastic-apm[flask]
