@@ -21,32 +21,24 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-#from elasticapm.contrib.flask import ElasticAPM
+from elasticapm.contrib.flask import ElasticAPM
 from flask_apscheduler import APScheduler
-#import socket
+import socket
 
 app = Flask(__name__)
 
-#app.config['ELASTIC_APM'] = {
- # 'SERVICE_NAME': 'airowiretool',
+app.config['ELASTIC_APM'] = {
+ 'SERVICE_NAME': 'airowiretool',
+ 'SECRET_TOKEN': 'amtapp',
+ 'SERVER_URL': 'https://10.10.100.31:8200',
+ 'ENVIRONMENT': 'my-environment',
+ 'VERIFY_SERVER_CERT': True,
+ 'SERVER_CERT': 'fleet.crt',
+ 'LOG_LEVEL': 'error',
+ 'DEBUG': True,
+ }
 
-  #'SECRET_TOKEN': 'amtapp',
-
-  #'SERVER_URL': 'https://10.10.100.31:8200',
-
-  #'ENVIRONMENT': 'my-environment',
-
-  #'VERIFY_SERVER_CERT': True,
-
-  #'SERVER_CERT': '/root/pocappfleet/fleet.crt',
-
-  #'LOG_LEVEL': 'error',
-
-  #'DEBUG': True,
-
-#}
-
-#apm = ElasticAPM(app)
+apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
