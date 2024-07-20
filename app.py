@@ -30,11 +30,11 @@ app = Flask(__name__)
 app.config['ELASTIC_APM'] = {
  'SERVICE_NAME': 'airowiretool',
  'SECRET_TOKEN': 'amtapp',
- 'SERVER_URL': 'https://10.10.100.41:8200',
- 'ENVIRONMENT': 'my-environment',
+ 'SERVER_URL': 'https://10.10.100.49:8200',
+ 'ENVIRONMENT': 'preprod',
  'VERIFY_SERVER_CERT': True,
  'SERVER_CERT': 'fleet.crt',
- 'LOG_LEVEL': 'error',
+ 'LOG_LEVEL': 'debug',
  'DEBUG': True,
  }
 
