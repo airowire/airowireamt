@@ -42,7 +42,7 @@ apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.98.104.253' #10.98.104.253
+app.config['MYSQL_HOST'] = '10.102.145.1'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
 app.config['MYSQL_DB'] = 'amt'
