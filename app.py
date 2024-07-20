@@ -31,7 +31,7 @@ app.config['ELASTIC_APM'] = {
  'SERVICE_NAME': 'airowiretool',
  'SECRET_TOKEN': 'amtapp',
  'SERVER_URL': 'https://10.10.100.49:8200',
- 'ENVIRONMENT': 'preprod',
+ 'ENVIRONMENT': 'my-environment',
  'VERIFY_SERVER_CERT': True,
  'SERVER_CERT': 'fleet.crt',
  'LOG_LEVEL': 'debug',
