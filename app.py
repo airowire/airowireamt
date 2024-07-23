@@ -44,7 +44,7 @@ app.secret_key = 'xyzsdfg'
 
 app.config['MYSQL_HOST'] = '10.102.145.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@123'
+app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
