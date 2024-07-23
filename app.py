@@ -199,7 +199,7 @@ def register():
         elif not uname or not password or not email or not repassword or not tname or not designation:
             message = 'Please fill out the form !'
         else:
-            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
+            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s,NULL)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
             mysql.connection.commit()
             message = 'You have successfully registered!'
             return redirect(url_for('login'))
