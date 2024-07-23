@@ -21,30 +21,30 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from elasticapm.contrib.flask import ElasticAPM
+# from elasticapm.contrib.flask import ElasticAPM
 from flask_apscheduler import APScheduler
 import socket
 
 app = Flask(__name__)
 
-app.config['ELASTIC_APM'] = {
- 'SERVICE_NAME': 'airowiretool',
- 'SECRET_TOKEN': 'amtapp',
- 'SERVER_URL': 'https://10.10.100.49:8200',
- 'ENVIRONMENT': 'my-environment',
- 'VERIFY_SERVER_CERT': True,
- 'SERVER_CERT': 'fleet.crt',
- 'LOG_LEVEL': 'debug',
- 'DEBUG': True,
- }
+# app.config['ELASTIC_APM'] = {
+#  'SERVICE_NAME': 'airowiretool',
+#  'SECRET_TOKEN': 'amtapp',
+#  'SERVER_URL': 'https://10.10.100.49:8200',
+#  'ENVIRONMENT': 'my-environment',
+#  'VERIFY_SERVER_CERT': True,
+#  'SERVER_CERT': 'fleet.crt',
+#  'LOG_LEVEL': 'debug',
+#  'DEBUG': True,
+#  }
 
-apm = ElasticAPM(app)
+# apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.102.145.1'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
+app.config['MYSQL_PASSWORD'] = ''  #Airowire@1234
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -61,6 +61,13 @@ class Config:
 app.config.from_object(Config())
 scheduler = APScheduler()
 scheduler.init_app(app)
+
+ # SMTP server configuration
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+smtp_username = "amtairowire@gmail.com"
+smtp_password = "cootssnoqqaozhyv"
+sender_email = "amtairowire@gmail.com"
 
 @app.route('/')
 @app.route('/login', methods=['GET', 'POST'])
@@ -199,13 +206,23 @@ def register():
         elif not uname or not password or not email or not repassword or not tname or not designation:
             message = 'Please fill out the form !'
         else:
-            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s,NULL)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
+            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
             mysql.connection.commit()
             message = 'You have successfully registered!'
+
+            # Send email notification
+            try:
+                rsend_email(uname, email, tname, designation)
+            except Exception as e:
+                message = f'Registration successful, but failed to send email. Error: {e}'
+            
             return redirect(url_for('login'))
     elif request.method == 'POST':
         message = 'Please fill out the form !'
     return render_template('register.html', message=message)
+
+
+    
 
 
 
@@ -289,88 +306,7 @@ def ecomplete():
     else:
         return "Issues in submitting"
 
-def bsend_email(exam):
-    name = exam[1]
-    cname = exam[2]
-    type = exam[5]
-    bedate = exam[10]
-    bextime = exam[11]
-    cost = exam[15]
-    uemail = exam[23]
-    sender_email = "amtairowire@gmail.com"
-    receiver_emails = ["yogesh@airowire.com"]
-    subject = "Certification Exam || Booking"
-    body = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-        <p>Hi Team,<p>
 
-        <p> Kindly find the below details of certification exam to be booked.</p><br>
-        <table style="border: 1px solid black;text-align: center" border="2">
-            <thead style="background-color: black;color: white">
-                <tr>
-                    <th>Employee Name</th>
-                    <th>Certificate Name</th>
-                    <th> Type </th>
-                    <th>Booking Exam Date</th>
-                    <th> Exam Cost </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{name}</td>
-                    <td>{cname}</td>
-                    <td>{type}</td>
-                    <td>{bedate}</td>
-                    <td> {cost} </td>
-                </tr>
-            </tbody>
-        </table>
-        <p>Thanks and Regards,<br>AMT Team </p>
-
-    </body>
-    </html>
-    """
-
-    # SMTP server configuration
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_username = "amtairowire@gmail.com"
-    smtp_password = "cootssnoqqaozhyv"
-
-    # DNS resolution check
-    try:
-        ip = socket.gethostbyname(smtp_server)
-        print(f"DNS resolution for {smtp_server} succeeded: {ip}")
-    except socket.gaierror as e:
-        print(f"DNS resolution failed: {e}")
-        # Log the error and return
-        return f"DNS resolution failed: {e}"
-
-    # Create a MIME multipart message
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
-    message["Subject"] = subject
-
-    message.attach(MIMEText(body, "html"))
-
-    try:
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
-            server.starttls()
-            server.login(smtp_username, smtp_password)
-            server.sendmail(sender_email, receiver_emails, message.as_string())
-        print("Email sent successfully.")
-        return "Email sent successfully"
-    except Exception as e:
-        print(f"Failed to send email: {e}")
-        # Log the error and return
-        return f"Failed to send email: {e}"
 
 
 @app.route('/bookexam', methods=['GET','POST'])
@@ -1246,6 +1182,7 @@ def mtapprove():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE user SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        user_approve(id)
         cur.close()
         return redirect('/uapprove')
     return redirect('/login')
@@ -1259,6 +1196,7 @@ def maureject():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE user SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        user_reject(id)
         cur.close()
         return redirect('/uapprove')
     return redirect('/login')
@@ -2892,6 +2830,146 @@ def upload_photo():
     cur.close()
     return redirect(url_for('profile'))
 
+#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=functions-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+def rsend_email(uname, email, tname, designation):
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email FROM user WHERE tname = %s and type="manager" ', (tname,))
+    data = cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com","sagar@airowire.com"]
+    receiver_emails.extend([item[0] for item in data])
+    subject = "New User Registration Request"
+    body = f"""
+    Hi Manager,
+    
+    A new user has requested for registration on the AMT Application.
+    Kindly approve only after verifying the below details.
+
+    Username: {uname}
+    Email: {email}
+    Team Name: {tname}
+    Designation: {designation}
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+    
+def bsend_email(exam):
+    name = exam[1]
+    cname = exam[2]
+    type = exam[5]
+    bedate = exam[10]
+    bextime = exam[11]
+    cost = exam[15]
+    uemail = exam[23]
+    sender_email = "amtairowire@gmail.com"
+    receiver_emails = ["yogesh@airowire.com"]
+    subject = "Certification Exam || Booking"
+    body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <p>Hi Team,<p>
+
+        <p> Kindly find the below details of certification exam to be booked.</p><br>
+        <table style="border: 1px solid black;text-align: center" border="2">
+            <thead style="background-color: black;color: white">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Certificate Name</th>
+                    <th> Type </th>
+                    <th>Booking Exam Date</th>
+                    <th> Exam Cost </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{name}</td>
+                    <td>{cname}</td>
+                    <td>{type}</td>
+                    <td>{bedate}</td>
+                    <td> {cost} </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Thanks and Regards,<br>AMT Team </p>
+
+    </body>
+    </html>
+    """
+
+   
+    
+    
+
+    # Create a MIME multipart message
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_emails)
+    message["Subject"] = subject
+
+    message.attach(MIMEText(body, "html"))
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, message.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+
+
+def user_approve(id):
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email,uname FROM user WHERE id = %s ', (id,))
+    u_email = cur.fetchone()
+    mmail=u_email[0]
+    uname=u_email[1]
+    receiver_emails = ["yogesh@airowire.com",mmail]
+    subject = "Registration Request Approved"
+    body = f"""
+    Hi {uname},
+    
+    Your registration request has been approved.
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"    
 
 
 
