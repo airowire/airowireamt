@@ -12,18 +12,24 @@
 
     <!-- Custom fonts for this template-->
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
     <style>
         body {
             background-image: url('https://wallpapercave.com/wp/wp3272754.jpg');
-            background-size: cover; /* Cover the entire container */
-            background-repeat: no-repeat; /* Do not repeat the image */
+            background-size: cover;
+            /* Cover the entire container */
+            background-repeat: no-repeat;
+            /* Do not repeat the image */
         }
 
         .card {
-            max-width: 500px; /* Set maximum width for the card */
-            margin: 70px auto; /* Center the card */
+            max-width: 500px;
+            /* Set maximum width for the card */
+            margin: 70px auto;
+            /* Center the card */
         }
     </style>
 </head>
@@ -36,7 +42,8 @@
                 <div class="col-lg-12">
                     <div class="p-5">
                         <div class="text-center">
-                            <img src="https://yt3.googleusercontent.com/ovOpbEcyCAtssPVkP7ehLJdtL9yciOBCWTl1OKGT8qnC640QGyZX85073CMCgHU5HYFSzXpJ0g=s900-c-k-c0x00ffffff-no-rj" width="200px" height="150px" style="margin-top: -60px;">
+                            <img src="https://yt3.googleusercontent.com/ovOpbEcyCAtssPVkP7ehLJdtL9yciOBCWTl1OKGT8qnC640QGyZX85073CMCgHU5HYFSzXpJ0g=s900-c-k-c0x00ffffff-no-rj"
+                                width="200px" height="150px" style="margin-top: -60px;">
                         </div>
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4"> User Login</h1>
@@ -46,10 +53,13 @@
                             <div class="alert alert-warning">{{ message }}</div>
                             {% endif %}
                             <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" name="email" placeholder="Enter email" name="email">
+                                <input type="email" class="form-control form-control-user" id="exampleInputEmail"
+                                    name="email" placeholder="Enter email" name="email">
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" name="password" placeholder="Enter password" name="pswd">
+                                <input type="password" class="form-control form-control-user" id="exampleInputPassword"
+                                    name="password" placeholder="Enter password" name="pswd"
+                                    >
                             </div>
                             <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                         </form>
@@ -58,7 +68,7 @@
                             <a class="small" href="forgotpassword">Forgot Password?</a>
                         </div>
                         <div class="text-center">
-                            <a class="small" href="{{url_for('register')}}">Don't have an account ? Register  here</a>
+                            <a class="small" href="{{url_for('register')}}">Don't have an account ? Register here</a>
                         </div>
                     </div>
                 </div>
@@ -73,4 +83,3 @@
 </body>
 
 </html>
-

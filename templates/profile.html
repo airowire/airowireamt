@@ -1,5 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-{% if session['type'] == 'manager' and session['tname'] == 'project' %}
+
 {% extends 'sidebar.html' %}
 {% block content %}
 <!DOCTYPE html>
@@ -155,22 +155,3 @@
 
 </html>
 {% endblock %}
-
-{% else %}
-<script>
-    window.onload = function () {
-        Swal.fire({
-            title: 'Access Denied!',
-            text: 'You are not allowed to view this page.',
-            icon: 'warning',
-            timer: 5000,
-            timerProgressBar: true,
-            showConfirmButton: false
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-                window.location.href = "/logout";
-            }
-        });
-    };
-</script>
-{% endif %}

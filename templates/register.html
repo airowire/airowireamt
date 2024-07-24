@@ -13,9 +13,12 @@
     <title>AMT Register</title>
 
     <!-- Custom fonts for this template-->
-    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet"
+        type="text/css">
 
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
@@ -24,15 +27,39 @@
             background-image: url('https://wallpapercave.com/wp/wp3272754.jpg');
             background-repeat: no-repeat;
             background-size: cover;
-            /* Optional: Adjust the background size */
-            /* Add other CSS styles as needed */
         }
-
+    
         .card {
-            max-width: 500px; /* Set maximum width for the card */
-            margin: 70px auto; /* Center the card */
+            max-width: 500px;
+            margin: 70px auto;
+        }
+    
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+    
+        .input-group input {
+            width: 100%;
+            padding-right: 2.5rem; /* Space for the icon */
+        }
+    
+        .icon {
+            position: absolute;
+            right: 10px;
+            display: none;
+        }
+    
+        .icon.valid {
+            color: green;
+        }
+    
+        .icon.invalid {
+            color: red;
         }
     </style>
+    
 
 </head>
 
@@ -44,7 +71,8 @@
                 <div class="col-lg-12">
                     <div class="p-5">
                         <div class="text-center">
-                            <img src="https://yt3.googleusercontent.com/ovOpbEcyCAtssPVkP7ehLJdtL9yciOBCWTl1OKGT8qnC640QGyZX85073CMCgHU5HYFSzXpJ0g=s900-c-k-c0x00ffffff-no-rj" class="img-fluid mb-4" alt="Logo" width="100px">
+                            <img src="https://yt3.googleusercontent.com/ovOpbEcyCAtssPVkP7ehLJdtL9yciOBCWTl1OKGT8qnC640QGyZX85073CMCgHU5HYFSzXpJ0g=s900-c-k-c0x00ffffff-no-rj"
+                                class="img-fluid mb-4" alt="Logo" width="100px">
                         </div>
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4"> New User ?</h1>
@@ -54,17 +82,24 @@
                             <div class="alert alert-warning">{{ message }}</div>
                             {% endif %}
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="User Name" name="uname">
+                                <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                    placeholder="User Name" name="uname">
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" name="email">
+                                <input type="email" class="form-control form-control-user" id="exampleInputEmail"
+                                    placeholder="Email Address" name="email">
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" name="password">
+                                    <input type="password" class="form-control form-control-user"
+                                        id="exampleInputPassword" placeholder="Password" name="password"
+                                        pattern="(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{8,}" required>
+                                    <span class="icon valid"><i class="fas fa-check"></i></span>
+                                    <span class="icon invalid"><i class="fas fa-times"></i></span>
                                 </div>
                                 <div class="col-sm-6">
-                                    <input type="password" class="form-control form-control-user" id="exampleRepeatPassword" placeholder="Repeat Password" name="repassword">
+                                    <input type="password" class="form-control form-control-user"
+                                        id="exampleRepeatPassword" placeholder="Repeat Password" name="repassword">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -79,7 +114,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <select name="designation" class="form-control" style="border-radius: 50px;height: 50px;">
+                                <select name="designation" class="form-control"
+                                    style="border-radius: 50px;height: 50px;">
                                     <option disabled>Select Designation</option>
                                     <option value="Network_Engineer">Network Engineer</option>
                                     <option value="Senior_Network_Engineer">Senior Network Engineer</option>
@@ -99,6 +135,22 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('password').addEventListener('input', function () {
+            var pattern = new RegExp(this.pattern);
+            var validIcon = this.nextElementSibling;
+            var invalidIcon = validIcon.nextElementSibling;
+    
+            if (pattern.test(this.value)) {
+                validIcon.style.display = 'inline';
+                invalidIcon.style.display = 'none';
+            } else {
+                validIcon.style.display = 'none';
+                invalidIcon.style.display = 'inline';
+            }
+        });
+    </script>
+    
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
@@ -106,4 +158,3 @@
 </body>
 
 </html>
-

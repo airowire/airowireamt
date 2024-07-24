@@ -10,7 +10,7 @@
 
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h5 class=" mb-0 text-black">External Demo  Dashboard</h5>
+        <h5 class=" mb-0 text-black">External Demo Dashboard</h5>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
     </div>
@@ -21,203 +21,204 @@
             Lab List
         </div>
         <div class="card-body">
-		 <div class="container">
-      <div class="header_wrap">
-        <div class="num_rows">
+            <div class="container">
+                <div class="header_wrap">
+                    <div class="num_rows">
 
-                                <div class="form-group">        <!--            Show Numbers Of Rows            -->
-                                        <select class  ="form-control" name="state" id="maxRows">
+                        <div class="form-group"> <!--            Show Numbers Of Rows            -->
+                            <select class="form-control" name="state" id="maxRows">
 
 
-                                                 <option value="10">10</option>
-                                                 <option value="15">15</option>
-                                                 <option value="20">20</option>
-                                                 <option value="50">50</option>
-                                                 <option value="70">70</option>
-                                                 <option value="100">100</option>
-            <option value="5000">Show ALL Rows</option>
-                                                </select>
+                                <option value="10">10</option>
+                                <option value="15">15</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="70">70</option>
+                                <option value="100">100</option>
+                                <option value="5000">Show ALL Rows</option>
+                            </select>
 
-                                </div>
-        </div>
-        <div class="tb_search">
-<input type="text" id="search_input_all" onkeyup="FilterkeyWord_all_table()" placeholder="Search.." class="form-control">
-        </div>
-      </div>
-
-            <table class="table table-bordered  table-class" id= "table-id">
-                <thead class="thead-dark">
-                    <tr>
-			 <th>Customer Name</th>
-			<th> Ticket No </th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-			<th> Requestor email </th>
-                        <th>Material</th>
-			<th>Qty </th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-			 {% for ticket, rows in grouped_data.items() %}
-        {% for row in rows %}
-                    <tr>
-			    <td><a href="#" class="open-modal" data-id="{{ row[0] }}" style="text-decoration: none;color: black">{{ row[1] }}</a></td>
-			    {% if loop.first %}
-			    <td rowspan="{{ rows|length }}">
-				 {{ row[13] }}
-			    </td>
-            {% endif %}
-
-                        <td>{{ row[5] }}</td>
-                        <td>{{ row[6] }}</td>
-			 <td>{{ row[7] }}</td>
-                          <td> {{ row[8] }}  </td>	
-            <td>
-		 {{ row[10] }} 
-            </td>
- 
-			 {% if loop.first %}
-                        <td  rowspan="{{ rows|length }}" style="align-items">
-                            {% if row[11] == 'returned approved' %}
-                            <a href="#" class="btn btn-secondary btn-sm">Returned</a>
-                            {% elif row[11] == 'Pending with manager' %}
-                            <a href="#" class="btn btn-secondary btn-sm">Pending</a>
-			     {% elif row[11] == 'rejected by manager' %}
-                            <a href="#" class="btn btn-warning btn-sm">Rejected</a>
-                            {% elif row[11] == 'approved' %}
-                            <a href="#" class="btn btn-primary btn-sm">Approved</a>
-                            {% elif row[11] == 'return initiated' %}
-                            <a href="/labapproveadd?tno={{ row[13] }}" class="btn btn-danger btn-sm">Approve</a>
-                            {% else %}
-			    <form action="/addserial" method="POST">
-				    <input type="hidden" name="tno" value="{{ row[13] }}">
-
-				    <input type="submit" name="submit" value="approve" class="btn btn-danger btn-sm">
-			    </form>
-                            {% endif %}
-                        </td>
-			{% endif %}
-                    </tr>
-                    {% endfor %}
-		     {% endfor %}
-                </tbody>
-            </table>
-	    <div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Additional Details</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <!-- Display details here -->
-                <div id="modal-details">
-		</div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-	     <div class='pagination-container'>
-                                <nav>
-                                  <ul class="pagination">
-                                   <!-- Here the JS Function Will Add the Rows -->
-                                  </ul>
-                                </nav>
                         </div>
-      <div class="rows_count">Showing 11 to 20 of 91 entries</div>
+                    </div>
+                    <div class="tb_search">
+                        <input type="text" id="search_input_all" onkeyup="FilterkeyWord_all_table()"
+                            placeholder="Search.." class="form-control">
+                    </div>
+                </div>
 
-</div> <!--             End of Container -->
+                <table class="table table-bordered  table-class" id="datatablesSimple">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Customer Name</th>
+                            <th> Ticket No </th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th> Requestor email </th>
+                            <th>Material</th>
+                            <th>Qty </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket, rows in grouped_data.items() %}
+                        {% for row in rows %}
+                        <tr>
+                            <td><a href="#" class="open-modal" data-id="{{ row[0] }}"
+                                    style="text-decoration: none;color: black">{{ row[1] }}</a></td>
+                            {% if loop.first %}
+                            <td rowspan="{{ rows|length }}">
+                                {{ row[13] }}
+                            </td>
+                            {% endif %}
+
+                            <td>{{ row[5] }}</td>
+                            <td>{{ row[6] }}</td>
+                            <td>{{ row[7] }}</td>
+                            <td> {{ row[8] }} </td>
+                            <td>
+                                {{ row[10] }}
+                            </td>
+
+                            {% if loop.first %}
+                            <td rowspan="{{ rows|length }}" style="align-items">
+                                {% if row[11] == 'returned approved' %}
+                                <a href="#" class="btn btn-secondary btn-sm">Returned</a>
+                                {% elif row[11] == 'Pending with manager' %}
+                                <a href="#" class="btn btn-secondary btn-sm">Pending</a>
+                                {% elif row[11] == 'rejected by manager' %}
+                                <a href="#" class="btn btn-warning btn-sm">Rejected</a>
+                                {% elif row[11] == 'approved' %}
+                                <a href="#" class="btn btn-primary btn-sm">Approved</a>
+                                {% elif row[11] == 'return initiated' %}
+                                <a href="/labapproveadd?tno={{ row[13] }}" class="btn btn-danger btn-sm">Approve</a>
+                                {% else %}
+                                <form action="/addserial" method="POST">
+                                    <input type="hidden" name="tno" value="{{ row[13] }}">
+
+                                    <input type="submit" name="submit" value="approve" class="btn btn-danger btn-sm">
+                                </form>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Additional Details</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <!-- Display details here -->
+                                <div id="modal-details">
+                                </div>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class='pagination-container'>
+                    <nav>
+                        <ul class="pagination">
+                            <!-- Here the JS Function Will Add the Rows -->
+                        </ul>
+                    </nav>
+                </div>
+                <div class="rows_count">Showing 11 to 20 of 91 entries</div>
+
+            </div> <!--             End of Container -->
 
         </div>
     </div>
     <!-- Add this modal markup at the end of your HTML body -->
-<!-- Modal -->
-<script>
-$(document).ready(function(){
-    $(".open-modal").click(function(){
-        var id = $(this).data('id');
+    <!-- Modal -->
+    <script>
+        $(document).ready(function () {
+            $(".open-modal").click(function () {
+                var id = $(this).data('id');
 
-        // Fetch details via AJAX request
-        $.ajax({
-            url: '/elapprove',
-            method: 'GET',
-            data: {id: id},
-            success: function(response){
-                // Check if response contains data
-                if (response) {
-                    // Populate modal body with details
-                    $("#modal-details").html(
-                        "<p>Ticket No: " + response.ticket_no + "</p>" +
-                        "<p>Customer Name: " + response.customer_name + "</p>" +
-			"<p>Customer Phone Number: " + response.customer_phone_number + "</p>" +
-                        "<p>Customer Email : " + response.customer_email + "</p>" +
-                        "<p>Material: " + response.material + "</p>" +
-                        "<p>Part Number: " + response.Part_Number + "</p>" +
-                        "<p>Status: " + response.status + "</p>" +
-                        "<p>Serial Number: " + response.serial_number + "</p>"
-                    );
-                } else {
-                    // If response is empty or does not contain data
-                    $("#modal-details").text("No data available");
+                // Fetch details via AJAX request
+                $.ajax({
+                    url: '/elapprove',
+                    method: 'GET',
+                    data: { id: id },
+                    success: function (response) {
+                        // Check if response contains data
+                        if (response) {
+                            // Populate modal body with details
+                            $("#modal-details").html(
+                                "<p>Ticket No: " + response.ticket_no + "</p>" +
+                                "<p>Customer Name: " + response.customer_name + "</p>" +
+                                "<p>Customer Phone Number: " + response.customer_phone_number + "</p>" +
+                                "<p>Customer Email : " + response.customer_email + "</p>" +
+                                "<p>Material: " + response.material + "</p>" +
+                                "<p>Part Number: " + response.Part_Number + "</p>" +
+                                "<p>Status: " + response.status + "</p>" +
+                                "<p>Serial Number: " + response.serial_number + "</p>"
+                            );
+                        } else {
+                            // If response is empty or does not contain data
+                            $("#modal-details").text("No data available");
+                        }
+
+                        // Open the modal
+                        $("#myModal").modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error(error);
+                        // Update modal title and body in case of error
+                        $(".modal-title").text('Error');
+                        $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
+
+                        // Open the modal
+                        $("#myModal").modal('show');
+                    }
+                });
+            });
+            $(".modal-footer .btn-danger").click(function () {
+                $("#myModal").modal('hide');
+            });
+            $(".close").click(function () {
+                $("#myModal").modal('hide');
+            });
+
+        });
+    </script>
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endblock %}
+    {% else %}
+    <script>
+        window.onload = function () {
+            Swal.fire({
+                title: 'Access Denied!',
+                text: 'You are not allowed to view this page.',
+                icon: 'warning',
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    window.location.href = "/logout";
                 }
-
-                // Open the modal
-                $("#myModal").modal('show');
-            },
-            error: function(xhr, status, error){
-                // Handle error
-                console.error(error);
-                // Update modal title and body in case of error
-                $(".modal-title").text('Error');
-                $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
-
-                // Open the modal
-                $("#myModal").modal('show');
-            }
-        });
-    });
-		$(".modal-footer .btn-danger").click(function() {
-    $("#myModal").modal('hide');
-});
-		  $(".close").click(function() {
-    $("#myModal").modal('hide');
-});
-
-});
-</script>
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-{% endblock %}
-{% else %}
-<script>
-    window.onload = function () {
-        Swal.fire({
-            title: 'Access Denied!',
-            text: 'You are not allowed to view this page.',
-            icon: 'warning',
-            timer: 5000,
-            timerProgressBar: true,
-            showConfirmButton: false
-        }).then((result) => {
-            if (result.dismiss === Swal.DismissReason.timer) {
-                window.location.href = "/logout";
-            }
-        });
-    };
-</script>
-{% endif %}
-
+            });
+        };
+    </script>
+    {% endif %}

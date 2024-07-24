@@ -21,30 +21,30 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from elasticapm.contrib.flask import ElasticAPM
+#from elasticapm.contrib.flask import ElasticAPM
 from flask_apscheduler import APScheduler
 import socket
 
 app = Flask(__name__)
 
-app.config['ELASTIC_APM'] = {
- 'SERVICE_NAME': 'airowiretool',
- 'SECRET_TOKEN': 'amtapp',
- 'SERVER_URL': 'https://10.10.100.49:8200',
- 'ENVIRONMENT': 'my-environment',
- 'VERIFY_SERVER_CERT': True,
- 'SERVER_CERT': 'fleet.crt',
- 'LOG_LEVEL': 'debug',
- 'DEBUG': True,
- }
+# app.config['ELASTIC_APM'] = {
+#  'SERVICE_NAME': 'airowiretool',
+#  'SECRET_TOKEN': 'amtapp',
+#  'SERVER_URL': 'https://10.10.100.49:8200',
+#  'ENVIRONMENT': 'my-environment',
+#  'VERIFY_SERVER_CERT': True,
+#  'SERVER_CERT': 'fleet.crt',
+#  'LOG_LEVEL': 'debug',
+#  'DEBUG': True,
+#  }
 
-apm = ElasticAPM(app)
+# apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.102.145.1'
+app.config['MYSQL_HOST'] = 'localhost'      #'10.102.145.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
+app.config['MYSQL_PASSWORD'] = 'Root@1234'  #Airowire@1234
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -199,7 +199,7 @@ def register():
         elif not uname or not password or not email or not repassword or not tname or not designation:
             message = 'Please fill out the form !'
         else:
-            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
+            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s,NULL)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
             mysql.connection.commit()
             message = 'You have successfully registered!'
             return redirect(url_for('login'))
