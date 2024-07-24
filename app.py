@@ -42,9 +42,9 @@ app = Flask(__name__)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.102.145.1'      #'10.102.145.1'
+app.config['MYSQL_HOST'] = '10.102.145.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
+app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -206,7 +206,7 @@ def register():
         elif not uname or not password or not email or not repassword or not tname or not designation:
             message = 'Please fill out the form !'
         else:
-            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s,NULL)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
+            cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
             mysql.connection.commit()
             message = 'You have successfully registered!'
 
@@ -335,40 +335,6 @@ def bookexam():
                 window.location.href = "/upcoming_certificate";
             </script>
             """
-
-
-def read_html_file(file_path):
-    with open(file_path, "r") as file:
-        html_content = file.read()
-    return html_content
-
-def examc_email(exam):
-    exam_ename = exam[1]
-    exam_cname = exam[2]
-    sender_email = "amtairowire@gmail.com"
-    receiver_emails = ["yogesh@airowire.com"]
-    subject = f"{exam_ename},Congratulation On Completing :  {exam_cname}"
-    html_content = read_html_file("templates/email_template.html")
-    html_content = html_content.replace("{{ sender_name }}", exam_ename)
-    html_content = html_content.replace("{{ exam_cname }}", exam_cname)
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_username = "amtairowire@gmail.com"
-    smtp_password = "cootssnoqqaozhyv"
-
-    # Create a MIME multipart message
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
-    message["Subject"] = subject
-    html_body = MIMEText(html_content, "html")  # Set the content type to HTML
-    message.attach(html_body)
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(sender_email, receiver_emails, message.as_string())
-
-
 
 @app.route('/tcertd')
 def tcertd():
@@ -626,7 +592,8 @@ def payoutadd():
         cursor.execute('INSERT INTO payout_details VALUES (NULL, %s,%s, %s, %s, %s, %s, %s,NULL)',
                        (name, date,enddate, remarks, 'Pending with PM', start_time, end_time))
         mysql.connection.commit()
-        message = 'Payout added successfully'
+        payoutadd_mail(date,enddate,remarks,start_time,end_time)
+        
         return redirect('/payout')
     return redirect('/payout')
 
@@ -1270,6 +1237,7 @@ def mpayoutapprove():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        payout_mail_approval(id)
         cur.close()
         return redirect('/mapayoutapprove')
     return redirect('/login')
@@ -1278,10 +1246,12 @@ def mpayoutapprove():
 def npayoutapprove():
     if 'loggedin' in session:
         id = request.args.get('id')
-        data = 'Pending with HR'
+        data = 'approved'
+        
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        payout_mail_approval(id)
         cur.close()
         return redirect('/nocpayoutapprove')
     return redirect('/login')
@@ -1341,6 +1311,7 @@ def mpayoutreject():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s, rreason = %s WHERE id = %s", ('rejected by manager', reason, labId))
         mysql.connection.commit()
+        payout_mail_reject(labId)
         cur.close()
         return redirect('/mapayoutapprove')
     return redirect('/login')
@@ -1364,6 +1335,7 @@ def npayoutreject():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s, rreason = %s WHERE id = %s", ('rejected by manager', reason, labId))
         mysql.connection.commit()
+        payout_mail_reject(labId)
         cur.close()
         return redirect('/nocpayoutapprove')
     return redirect('/login')
@@ -1542,6 +1514,7 @@ def mapayoutapprove():
             'reason' : mdata[8]
        })
     cur.close()
+    
 
     if 'loggedin' in session:
         return render_template('/mapayoutapprove.html', data=data)
@@ -2459,17 +2432,7 @@ def medapprove():
     return redirect('/login')
 generated_ticket_numbers = []
 
-def generate_ticket_number(prefix, length=5):
-    while True:
-        # Generate random numeric part
-        numeric_part = ''.join(random.choices(string.digits, k=length))
 
-        # Generate ticket number
-        ticket_number = prefix + numeric_part
-
-        # Check if ticket number already exists in generated_ticket_numbers
-        if ticket_number not in generated_ticket_numbers:
-            return ticket_number
 
 @app.route('/admin/coem')
 def coem():
@@ -2487,25 +2450,7 @@ def forgotpassword():
 def otpveirfy():
     return render_template('/otpverify.html')
 
-def generate_otp():
-    return str(random.randint(100000, 999999))
 
-def send_email(receiver_email, body, sender_email, subject):
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_username = "amtairowire@gmail.com"
-    smtp_password = "cootssnoqqaozhyv"
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = receiver_email
-    message["Subject"] = subject
-
-    message.attach(MIMEText(body, "html"))
-
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(sender_email, receiver_email, message.as_string())
 
 @app.route('/send_otp', methods=['POST'])
 def send_otp():
@@ -2638,74 +2583,7 @@ def doem():
         return redirect('/admin/coem')
     return redirect('/login')
 
-def cert_email(subject, body, to_emails, cc_emails=None):
-    from_email = 'amtairowire@gmail.com'
-    from_password = 'cootssnoqqaozhyv'
 
-    if isinstance(to_emails, str):
-        to_emails = [to_emails]
-
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = from_email
-        msg['To'] = ', '.join(to_emails)
-        if cc_emails:
-            msg['Cc'] = ', '.join(cc_emails)
-        msg['Subject'] = subject
-
-        msg.attach(MIMEText(body, 'plain'))
-
-        server = smtplib.SMTP('142.251.175.108', 587)
-        server.starttls()
-        server.login(from_email, from_password)
-        recipients = to_emails + (cc_emails if cc_emails else [])
-        text = msg.as_string()
-        server.sendmail(from_email, recipients, text)
-        server.quit()
-        print(f"Email sent to {', '.join(to_emails)}")
-    except Exception as e:
-        print(f"Failed to send email to {', '.join(to_emails)}: {e}")
-
-def query_and_send_emails(days_before):
-    try:
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = f"""
-        SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {days_before} DAY);
-        """
-        cur.execute(query)
-        results = cur.fetchall()
-        for row in results:
-            cname = row['cname']
-            edate = row['edate']
-            email = row['email']
-            subject = f"Expiry Notice for {cname}"
-            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
-            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
-            cert_email(subject, body, [email], cc_emails)
-        cur.close()
-    except Exception as e:
-        print(f"Error in query_and_send_emails({days_before}): {e}")
-
-
-def query_and_send_emails_hours(hours_before):
-    try:
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = f"""
-         SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {hours_before} HOUR);
-        """
-        cur.execute(query)
-        results = cur.fetchall()
-        for row in results:
-            cname = row['cname']
-            edate = row['edate']
-            email = row['email']
-            subject = f"Expiry Notice for {cname}"
-            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
-            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
-            cert_email(subject, body, email,cc_emails)
-        cur.close()
-    except Exception as e:
-        print(f"Error in query_and_send_emails_hours({hours_before}): {e}")
 
 @scheduler.task('interval', id='check_and_send_emails_60_days', hours=24)
 def scheduled_task_60_days():
@@ -2730,10 +2608,8 @@ def scheduled_task_12_hours():
 
 
 
-# Developed by Sagar
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -2831,6 +2707,11 @@ def upload_photo():
     return redirect(url_for('profile'))
 
 #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=functions-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def rsend_email(uname, email, tname, designation):
     cur = mysql.connection.cursor()
@@ -2970,9 +2851,336 @@ def user_approve(id):
         print(f"Failed to send email: {e}")
         # Log the error and return
         return f"Failed to send email: {e}"    
+    
+
+def user_reject(id):
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email,uname FROM user WHERE id = %s ', (id,))
+    u_email = cur.fetchone()
+    mmail=u_email[0]
+    uname=u_email[1]
+    receiver_emails = ["yogesh@airowire.com",mmail]
+    subject = "Registration Request has been rejected by team manager"
+    body = f"""
+    Hi {uname},
+    
+    Your registration request has been Rejected by the team manager.
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+def payoutadd_mail(date,enddate,remarks,start_time,end_time):
+    
+    name = session.get('uname')
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT tname from user where uname = %s', (name,))
+    tname1=cur.fetchall()
+    print(tname1)
+    cur.execute('SELECT email from user where tname = %s and type="manager"',(tname1,))
+    paymail=cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com"]
+    receiver_emails.extend([item[0]for item in paymail])
+    subject = "New Payout Request"
+    body = f"""
+    
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <p>Hi Team,<p>
+
+        <p> Kindly find the details below for new payout request</p><br>
+        <table style="border: 1px solid black;text-align: center" border="2">
+            <thead style="background-color: black;color: white">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Payout Details</th>
+                    <th> Start Date </th>
+                    <th>End Date</th>
+                    <th> Start Time </th>
+                    <th> End Time </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{name}</td>
+                    <td>{remarks}</td>
+                    <td>{date}</td>
+                    <td>{enddate}</td>
+                    <td> {start_time} </td>
+                    <td> {end_time} </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Thanks and Regards,<br>AMT Team </p>
+
+    </body>
+    </html>
+    
+    
+    
+    .
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+    
+def read_html_file(file_path):
+    with open(file_path, "r") as file:
+        html_content = file.read()
+    return html_content
+
+def examc_email(exam):
+    exam_ename = exam[1]
+    exam_cname = exam[2]
+    sender_email = "amtairowire@gmail.com"
+    receiver_emails = ["yogesh@airowire.com"]
+    subject = f"{exam_ename},Congratulation On Completing :  {exam_cname}"
+    html_content = read_html_file("templates/email_template.html")
+    html_content = html_content.replace("{{ sender_name }}", exam_ename)
+    html_content = html_content.replace("{{ exam_cname }}", exam_cname)
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = "amtairowire@gmail.com"
+    smtp_password = "cootssnoqqaozhyv"
+
+    # Create a MIME multipart message
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_emails)
+    message["Subject"] = subject
+    html_body = MIMEText(html_content, "html")  # Set the content type to HTML
+    message.attach(html_body)
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(sender_email, receiver_emails, message.as_string())    
+        
+def generate_ticket_number(prefix, length=5):
+    while True:
+        # Generate random numeric part
+        numeric_part = ''.join(random.choices(string.digits, k=length))
+
+        # Generate ticket number
+        ticket_number = prefix + numeric_part
+
+        # Check if ticket number already exists in generated_ticket_numbers
+        if ticket_number not in generated_ticket_numbers:
+            return ticket_number
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def send_email(receiver_email, body, sender_email, subject):
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = "amtairowire@gmail.com"
+    smtp_password = "cootssnoqqaozhyv"
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+
+    message.attach(MIMEText(body, "html"))
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
 
 
+def cert_email(subject, body, to_emails, cc_emails=None):
+    from_email = 'amtairowire@gmail.com'
+    from_password = 'cootssnoqqaozhyv'
 
+    if isinstance(to_emails, str):
+        to_emails = [to_emails]
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = from_email
+        msg['To'] = ', '.join(to_emails)
+        if cc_emails:
+            msg['Cc'] = ', '.join(cc_emails)
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP('142.251.175.108', 587)
+        server.starttls()
+        server.login(from_email, from_password)
+        recipients = to_emails + (cc_emails if cc_emails else [])
+        text = msg.as_string()
+        server.sendmail(from_email, recipients, text)
+        server.quit()
+        print(f"Email sent to {', '.join(to_emails)}")
+    except Exception as e:
+        print(f"Failed to send email to {', '.join(to_emails)}: {e}")
+
+def query_and_send_emails(days_before):
+    try:
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        query = f"""
+        SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {days_before} DAY);
+        """
+        cur.execute(query)
+        results = cur.fetchall()
+        for row in results:
+            cname = row['cname']
+            edate = row['edate']
+            email = row['email']
+            subject = f"Expiry Notice for {cname}"
+            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
+            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
+            cert_email(subject, body, [email], cc_emails)
+        cur.close()
+    except Exception as e:
+        print(f"Error in query_and_send_emails({days_before}): {e}")
+
+
+def query_and_send_emails_hours(hours_before):
+    try:
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        query = f"""
+         SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {hours_before} HOUR);
+        """
+        cur.execute(query)
+        results = cur.fetchall()
+        for row in results:
+            cname = row['cname']
+            edate = row['edate']
+            email = row['email']
+            subject = f"Expiry Notice for {cname}"
+            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
+            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
+            cert_email(subject, body, email,cc_emails)
+        cur.close()
+    except Exception as e:
+        print(f"Error in query_and_send_emails_hours({hours_before}): {e}")
+        
+def payout_mail_approval(id):
+
+    name= session.get('uname')
+    
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email from user where uname= %s' ,(name,))
+    i_mail=cur.fetchall()
+    cur.execute('SELECT * from payout_details where id= %s' ,(id,))
+    data=cur.fetchone()
+    print(data)
+    username = data[1]
+    cur.execute('SELECT email  from user where uname= %s' ,(username,))
+    data1=cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com",]
+    receiver_emails.extend([item[0] for item in i_mail])
+    receiver_emails.extend([item[0] for item in data1])
+    subject = "Your payout request is approved "
+    body = f"""
+    Hi {username},
+    
+    Your Payout request dated from {data[2]} to {data[3]} has been approved by the manager.
+
+    
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+    
+def payout_mail_reject(labId):
+
+    name= session.get('uname')
+    
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email from user where uname= %s' ,(name,))
+    i_mail=cur.fetchall()
+    cur.execute('SELECT * from payout_details where id= %s' ,(labId,))
+    data=cur.fetchone()
+    print(data)
+    username = data[1]
+    cur.execute('SELECT email  from user where uname= %s' ,(username,))
+    data1=cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com",]
+    receiver_emails.extend([item[0] for item in i_mail])
+    receiver_emails.extend([item[0] for item in data1])
+    subject = "Your payout request is rejected "
+    body = f"""
+    Hi {username},
+    
+    Your Payout request dated from {data[2]} to {data[3]} has been rejected by the manager.
+
+    
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+    
+    
+    
+    
+           
+
+    
+        
+        
 if __name__ == "__main__":
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         scheduler.start()
