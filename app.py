@@ -21,11 +21,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-<<<<<<< HEAD
-#from elasticapm.contrib.flask import ElasticAPM
-=======
 # from elasticapm.contrib.flask import ElasticAPM
->>>>>>> c8e5960f6fcbfaa1fb96b807e9882e8c68341bb6
 from flask_apscheduler import APScheduler
 import socket
 
@@ -46,13 +42,9 @@ app = Flask(__name__)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = 'localhost'      #'10.102.145.1'
+app.config['MYSQL_HOST'] = '10.102.145.1'      #'10.102.145.1'
 app.config['MYSQL_USER'] = 'root'
-<<<<<<< HEAD
-app.config['MYSQL_PASSWORD'] = 'Root@1234'  #Airowire@1234
-=======
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
->>>>>>> c8e5960f6fcbfaa1fb96b807e9882e8c68341bb6
+app.config['MYSQL_PASSWORD'] = 'Airowire@1234'  #Airowire@1234
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
