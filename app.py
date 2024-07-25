@@ -5,6 +5,7 @@ from flask import Flask, Response, jsonify, render_template, request, redirect, 
 import pandas as pd
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash,generate_password_hash
+from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -3171,16 +3172,155 @@ def payout_mail_reject(labId):
         print(f"Failed to send email: {e}")
         # Log the error and return
         return f"Failed to send email: {e}"
-    
-    
-    
-    
-    
-           
 
+@app.route('/user_certificate')
+def user_certificate():
+    cur = mysql.connection.cursor()
+    uname = session.get('uname')
+    cur.execute('SELECT * FROM certification where name=%s',(uname,))
+    data = cur.fetchall()
+    id = request.args.get('id')
+    if id is not None:
+        cur.execute("SELECT * FROM  certification WHERE id = %s", (id,))
+        mdata = cur.fetchone()
+        # Assuming you want to return specific fields from mdata
+        return jsonify({
+            'name': mdata[1],
+            'cname': mdata[2],
+            'asdate' : mdata[3],
+            'tdate' : mdata[4],
+            'type': mdata[5],
+            'status' : mdata[6],
+            'adate': mdata[7],
+            'edate' : mdata[8],
+            'reason' : mdata[9]
+        })
+    cur.close()
+    if 'loggedin' in session:
+        return render_template('user_certificate.html', data=data)
+    return redirect('/login')
+
+def cert_assigned_email(name,cname,adate,tdate,type):
+    cur = mysql.connection.cursor()
+    uname = session.get('uname')
+    cur.execute('SELECT email FROM user WHERE uname = %s  ', (uname,))
+    data = cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com"]
+    receiver_emails.extend([item[0] for item in data])
+    subject = "New Certificate Assinged"
+    body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <p>Hi {name},<p>
+
+        <p> Kindly find the below details of certification assgined to you please
+        complete it by before target date is reaching. </p><br>
+        <table style="border: 1px solid black;text-align: center" border="2">
+            <thead style="background-color: black;color: white">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Certificate Name</th>
+                    <th> Assigned Date </th>
+                    <th> Target Date</th>
+                    <th> Assigned By </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{name}</td>
+                    <td>{cname}</td>
+                    <td>{adate}</td>
+                    <td>{tdate}</td>
+                    <td> {uname} </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Thanks and Regards,<br>AMT Team </p>
+
+    </body>
+    </html>
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
     
-        
-        
+# Configuration for file uploads
+UPLOAD_FOLDER = 'static/img/proof'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/proofsubmit', methods=['POST','GET'])
+def proofsubmit():
+    if request.method == 'POST':
+        id = request.form['id']
+        adate = request.form['adate']
+        edate = request.form['edate']
+
+        # Check if the post request has the file part
+        if 'proof' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['proof']
+
+        # If user does not select file, browser also
+        # submits an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            # Assuming you have a database connection setup
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE certification SET status = 'approval pending', adate=%s, edate=%s, proof=%s WHERE id = %s", (adate, edate, filename, id))
+            mysql.connection.commit()
+            cur.close()
+
+            return """
+                <script>
+                    alert("Proof uploaded successfully");
+                    window.location.href = "/user_certificate";
+                </script>
+            """
+        else:
+            return """
+                <script>
+                    alert("Invalid file format. Please upload only PNG, JPG, JPEG, or GIF files.");
+                    window.location.href = "/upcoming_certificate";
+                </script>
+            """
+    else:
+        return """
+            <script>
+                alert("Check with administrator");
+                window.location.href = "/upcoming_certificate";
+            </script>
+        """    
+    
 if __name__ == "__main__":
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         scheduler.start()
