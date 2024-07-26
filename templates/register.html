@@ -23,43 +23,58 @@
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
     <style>
+        .password-requirements {
+            
+            /* Adjust the size to fit on one line if needed */
+            color: #666;
+            /* Lighter color for subtlety */
+            margin-top: 5px;
+            /* Spacing between input and text */
+            white-space: nowrap;
+            /* Prevents text from breaking into multiple lines */
+            overflow:hidden;
+            text-overflow: ellipsis;
+            /* Adds ... if text is too long */
+        }
+
         body {
             background-image: url('https://wallpapercave.com/wp/wp3272754.jpg');
             background-repeat: no-repeat;
             background-size: cover;
         }
-    
+
         .card {
             max-width: 500px;
             margin: 70px auto;
         }
-    
+
         .input-group {
             position: relative;
             display: flex;
             align-items: center;
         }
-    
+
         .input-group input {
             width: 100%;
-            padding-right: 2.5rem; /* Space for the icon */
+            padding-right: 2.5rem;
+            /* Space for the icon */
         }
-    
+
         .icon {
             position: absolute;
             right: 10px;
             display: none;
         }
-    
+
         .icon.valid {
             color: green;
         }
-    
+
         .icon.invalid {
             color: red;
         }
     </style>
-    
+
 
 </head>
 
@@ -92,7 +107,8 @@
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                     <input type="password" class="form-control form-control-user"
-                                        id="exampleInputPassword" placeholder="Password" name="password"
+                                        id="exampleInputPassword" name="password"
+                                        placeholder="password"
                                         pattern="(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{8,}" required>
                                     <span class="icon valid"><i class="fas fa-check"></i></span>
                                     <span class="icon invalid"><i class="fas fa-times"></i></span>
@@ -102,6 +118,7 @@
                                         id="exampleRepeatPassword" placeholder="Repeat Password" name="repassword">
                                 </div>
                             </div>
+                            <p class="password-requirements">Password : 8 characters, 1 number and 1 special character</p>
                             <div class="form-group">
                                 <select name="tname" class="form-control" style="border-radius: 50px;height: 50px;">
                                     <option disabled>Select Team</option>
@@ -140,7 +157,7 @@
             var pattern = new RegExp(this.pattern);
             var validIcon = this.nextElementSibling;
             var invalidIcon = validIcon.nextElementSibling;
-    
+
             if (pattern.test(this.value)) {
                 validIcon.style.display = 'inline';
                 invalidIcon.style.display = 'none';
@@ -150,7 +167,7 @@
             }
         });
     </script>
-    
+
     <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
