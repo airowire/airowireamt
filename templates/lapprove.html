@@ -54,7 +54,7 @@
                             <td>{{ row[5] }}</td>
                             <td>{{ row[6] }}</td>
                             {% if loop.first %}
-                            <td rowspan="{{ rows|length }}">
+                            <td  rowspan="{{ rows|length }}">
                                 {% if session['tname'] == 'operation' %}
                                 {% if row[7] == 'returned approved' %}
                                 <a href="#" class="btn btn-secondary btn-sm">Returned</a>
@@ -74,11 +74,11 @@
                                 {% elif session['email'] == 'admin@gmail.com' or session['tname'] == 'project' and
                                 session['type'] == 'manager' %}
                                 {% if row[7] == 'Pending with manager' %}
-                                <a href="/milabapprove?tno={{ row[12] }}" class="btn btn-danger btn-sm">Approve</a>
-                                <button type="button" class="btn btn-warning btn-sm" data-rid="{{ row[12] }}"
-                                    id="rejectBtn">Reject</button>
+                                <a href="/milabapprove?tno={{ row[12] }}" class="btn btn-danger btn-sm mb-1">Approve</a>
+                                <button type="button" class="btn btn-warning btn-sm m-1" data-rid="{{ row[12] }}"
+                                    id="rejectBtn" >Reject</button>
                                 {% elif row[7] == 'rejected by manager' %}
-                                <a href="#" class="btn btn-warning btn-sm">Rejected</a>
+                                <a href="#" class="btn btn-warning btn-sm ">Rejected</a>
                                 {% else %}
                                 <a href="#" class="btn btn-primary btn-sm">Approved</a>
                                 {% endif %}
@@ -176,7 +176,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitReason">Submit</button>
+                    <input type="submit" class="btn btn-primary" id="submitReason"></input>
                 </div>
             </div>
         </div>

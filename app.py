@@ -22,30 +22,28 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-# from elasticapm.contrib.flask import ElasticAPM
+from elasticapm.contrib.flask import ElasticAPM
 from flask_apscheduler import APScheduler
 import socket
 
 app = Flask(__name__)
 
-# app.config['ELASTIC_APM'] = {
-#  'SERVICE_NAME': 'airowiretool',
-#  'SECRET_TOKEN': 'amtapp',
-#  'SERVER_URL': 'https://10.10.100.49:8200',
-#  'ENVIRONMENT': 'my-environment',
-#  'VERIFY_SERVER_CERT': True,
-#  'SERVER_CERT': 'fleet.crt',
-#  'LOG_LEVEL': 'debug',
-#  'DEBUG': True,
-#  }
+app.config['ELASTIC_APM'] = {
+ 'SERVICE_NAME': 'airowiretool',
+ 'SECRET_TOKEN': 'bERbdkVIhvFES2Qvvc',
+ 'SERVER_URL': 'https://96bfa50fb8ee4c468ab50a6f7ce1c590.apm.eastus2.azure.elastic-cloud.com:443',
+ 'ENVIRONMENT': 'my-environment',
+ 'LOG_LEVEL': 'debug',
+ 'DEBUG': True,
+ }
 
-# apm = ElasticAPM(app)
+apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = '10.102.145.1'
+app.config['MYSQL_HOST'] = 'localhost'    #10.102.145.1
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Airowire@1234'
+app.config['MYSQL_PASSWORD'] = 'Root@1234'
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
