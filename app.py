@@ -1178,6 +1178,7 @@ def mapprove():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE user SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        user_approve(id)
         cur.close()
         return redirect('/admin/uapprove')
     return redirect('/admin/alogin')
@@ -1190,6 +1191,7 @@ def ureject():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE user SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        user_reject(id)
         cur.close()
         return redirect('/admin/uapprove')
     return redirect('/admin/alogin')
@@ -1226,6 +1228,7 @@ def payoutapprove():
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        payout_mail_approval(id)
         cur.close()
         return redirect('/admin/papprove')
     return redirect('/admin/alogin')
@@ -1285,10 +1288,12 @@ def hrpayoutreject():
 def preject():
     if 'loggedin' in session:
         id = request.args.get('id')
+        labId=id
         data = 'rejected by manager'
         cur = mysql.connection.cursor()
         cur.execute("UPDATE payout_details SET status = %s WHERE id = %s", (data,id))
         mysql.connection.commit()
+        payout_mail_reject(labId)
         cur.close()
         return redirect('/admin/papprove')
     return redirect('/admin/alogin')
@@ -3153,6 +3158,8 @@ def payout_mail_reject(labId):
     Hi {username},
     
     Your Payout request dated from {data[2]} to {data[3]} has been rejected by the manager.
+
+    Reason={data[8]}
 
     
     """
