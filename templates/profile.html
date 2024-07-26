@@ -22,7 +22,7 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-buttons button">
-                    <h4>MY PROFILE </h4>
+                    <h4 style="color:blue;">MY PROFILE </h4>
                 </div>
                 <div class="profile-buttons">
                     <button class="button" data-toggle="modal" data-target="#changePasswordModal">
@@ -41,28 +41,28 @@
                     <form id="profile-info-form" method="POST" action="{{ url_for('profile') }}">
                         <table class="table table-borderless">
                             <tr>
-                                <td><strong>Name</strong></td>
+                                <td class="text-capitalize"><strong>Name</strong></td>
                                 <td>
-                                    <span id="name-text">{{ data['uname'] }}</span>
+                                    <span id="name-text" class="text-capitalize">{{ data['uname'] }}</span>
                                     <input type="text" id="name-input" name="name" class="form-control d-none"
                                         value="{{ data['uname'] }}">
                                 </td>
                             </tr>
                             <tr>
                                 <td><strong>Email </strong></td>
-                                <td>
-                                    <span id="email-text">{{ data['email'] }}</span>
+                                <td >
+                                    <span id="email-text" class="text-capitalize">{{ data['email'] }}</span>
                                     <input type="email" id="email-input" name="email" class="form-control d-none"
                                         value="{{ data['email'] }}">
                                 </td>
                             </tr>
                             <tr>
                                 <td><strong>Team</strong></td>
-                                <td>{{ data['tname'] }}</td>
+                                <td class="text-uppercase">{{ data['tname'] }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Designation</strong></td>
-                                <td>{{ data['designation'] }}</td>
+                                <td class="text-capitalize">{{ data['designation'] }}</td>
                             </tr>
                         </table>
 

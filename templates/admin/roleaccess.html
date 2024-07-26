@@ -29,16 +29,16 @@
                             <th>User Type</th>
                             <th>Team Name</th>
                             <th>Email</th>
-                            <th>Action</th>           
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
                             <th>User Name</th>
                             <th>User Type</th>
-                            <th>Team Name</th>    
+                            <th>Team Name</th>
                             <th>Email</th>
-                            <th>Action</th>               
+                            <th>Action</th>
                         </tr>
                     </tfoot>
                     <tbody>
@@ -51,12 +51,14 @@
                             <td>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <a href="/admin/maccess?id={{ row[0] }}" style="text-decoration: none;" class="btn btn-primary"
-                                           onclick="showRoleChangeModal('Manager'); return false;">Manager</a>
+                                        <a href="/admin/maccess?id={{ row[0] }}" style="text-decoration: none;"
+                                            class="btn btn-primary"
+                                            onclick="showRoleChangeModal('Manager'); return false;">Manager</a>
                                     </div>
                                     <div class="col-lg-6">
-                                        <a href="/admin/uaccess?id={{ row[0] }}" style="text-decoration: none;" class="btn btn-danger"
-                                           onclick="showRoleChangeModal('User'); return false;">User</a>
+                                        <a href="/admin/uaccess?id={{ row[0] }}" style="text-decoration: none;"
+                                            class="btn btn-danger"
+                                            onclick="showRoleChangeModal('User'); return false;">User</a>
                                     </div>
                                 </div>
                             </td>
@@ -69,7 +71,8 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="roleChangeModal" tabindex="-1" role="dialog" aria-labelledby="roleChangeModalLabel" aria-hidden="true">
+        <div class="modal fade" id="roleChangeModal" tabindex="-1" role="dialog" aria-labelledby="roleChangeModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -95,9 +98,34 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        function showRoleChangeModal(role) {
+        function confirmRoleChange(userId, role) {
             document.getElementById('roleName').textContent = role;
             $('#roleChangeModal').modal('show');
+
+            document.getElementById('confirmChangeButton').onclick = function () {
+                // Perform the role change request
+                fetch(`/admin/change_role?id=${userId}&role=${role}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userId: userId, role: role })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload(); // Reload the page to reflect the changes
+                        } else {
+                            alert('Role change failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred');
+                    });
+
+                $('#roleChangeModal').modal('hide');
+            };
         }
     </script>
-{% endblock %}
+    {% endblock %}
