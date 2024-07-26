@@ -1,4 +1,3 @@
-		
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% if session['tname'] == "project" or session['tname'] == "noc" %}
 {% extends 'sidebar.html' %}
@@ -8,29 +7,30 @@
 <!-- CSS -->
 <style>
     .dropdown-menu {
-        max-height: 200px; /* Adjust max-height as needed */
+        max-height: 200px;
+        /* Adjust max-height as needed */
         overflow-y: auto;
     }
 </style>
 
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h5 class=" mb-0 text-black">Internal Lab  Dashboard</h5>
+        <h5 class=" mb-0 text-black">Internal Lab Dashboard</h5>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
     </div>
     <div class="card mb-4">
         <div class="card-header">
-                                    <i class="fas fa-table me-1"></i>
-                                    Add Lab
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
+            <i class="fas fa-table me-1"></i>
+            Add Lab
+        </div>
+        <div class="card-body">
+            <div class="row">
                 <div class="col-lg-2">
                     <form action="{{ url_for('labadd') }}" method="post" id="materialForm">
                         <label>Select Purpose </label><br>
                         <select class="form-control" name="purpose" id="purposeSelect" style="border: 1px solid black;">
-                            <option value="#" >---Select---</option>
+                            <option value="#">---Select---</option>
                             <option value="Testing">Testing</option>
                             <option value="POC">POC</option>
                             <option value="Training">Training</option>
@@ -41,265 +41,281 @@
                             <br>
                             <label>Enter the Project name</label><br>
                             <input type="text" class="form-control" name="pname" placeholder="" id="pname">
-                            
-                            
+
+
                         </div>
                 </div>
                 <script>
-                    document.getElementById("purposeSelect").addEventListener("change", function() {
+                    document.getElementById("purposeSelect").addEventListener("change", function () {
                         var selectValue = this.value;
                         var projectTestingFields = document.getElementById("projectTestingFields");
-                
-                        
+
+
                         if (selectValue === "Project&Ticket") {
                             projectTestingFields.style.display = "block";
                         } else {
                             projectTestingFields.style.display = "none";
                         }
                     });
-                </script><script>
-    document.getElementById("purposeSelect").addEventListener("change", function() {
-        var selectValue = this.value;
-        var projectTestingFields = document.getElementById("projectTestingFields");
+                </script>
+                <script>
+                    document.getElementById("purposeSelect").addEventListener("change", function () {
+                        var selectValue = this.value;
+                        var projectTestingFields = document.getElementById("projectTestingFields");
 
-        if (selectValue === "Project&Ticket") {
-            projectTestingFields.style.display = "block";
-        } else {
-            projectTestingFields.style.display = "none";
-        }
-    });
-</script>
-<div class="col-lg-4">
-    <label>Select Material </label><br>
-    <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="width: 300px;background-color: white;color:black;">
-            Select Material
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdownMenu">
-            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-            <li><hr class="dropdown-divider"></li>
-            {% for iname in inventoryname %}
-                <li><a class="dropdown-item material-option" href="#" data-material="{{ iname[3] }}">{{ iname[3] }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    <input type="hidden" name="material" id="materialInput">
-    
-    <div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="stockModalLabel">Stock Information</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="stockInfo"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    
-    <script>
-        $(document).ready(function() {
-
-            $('.material-option').click(function() {
-                var selectedOption = $(this).data("material");
-                $.ajax({
-                    type: 'POST',
-                    url: '/lab',
-                    data: {'material': selectedOption},
-                    success: function(response) {
-                        var quantity = response.quantity;
-                        if (quantity != 0) {
-                            $('#stockInfo').text(selectedOption + ' is in stock and has ' + quantity + ' quantity.');
+                        if (selectValue === "Project&Ticket") {
+                            projectTestingFields.style.display = "block";
                         } else {
-                            $('#stockInfo').text(selectedOption + ' is out of stock.');
+                            projectTestingFields.style.display = "none";
                         }
-                        $('#stockModal').modal('show');
-                    },
-                    error: function(xhr, status, error) {
-                        alert('Error fetching quantity: ' + error);
+                    });
+                </script>
+                <div class="col-lg-4">
+                    <label>Select Material </label><br>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false"
+                            style="width: 300px;background-color: white;color:black;">
+                            Select Material
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdownMenu">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            {% for iname in inventoryname %}
+                            <li><a class="dropdown-item material-option" href="#" data-material="{{ iname[3] }}">{{
+                                    iname[3] }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <input type="hidden" name="material" id="materialInput">
+
+                    <div class="modal fade" id="stockModal" tabindex="-1" aria-labelledby="stockModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="stockModalLabel">Stock Information</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="stockInfo"></p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        $(document).ready(function () {
+
+                            $('.material-option').click(function () {
+                                var selectedOption = $(this).data("material");
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/lab',
+                                    data: { 'material': selectedOption },
+                                    success: function (response) {
+                                        var quantity = response.quantity;
+                                        if (quantity != 0) {
+                                            $('#stockInfo').text(selectedOption + ' is in stock and has ' + quantity + ' quantity.');
+                                        } else {
+                                            $('#stockInfo').text(selectedOption + ' is out of stock.');
+                                        }
+                                        $('#stockModal').modal('show');
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error fetching quantity: ' + error);
+                                    }
+                                });
+                            });
+                            $('#stockModal').on('hidden.bs.modal', function () {
+                                $('#stockInfo').empty();
+                            });
+                            $('.material-option').click(function () {
+                                var selectedMaterial = $(this).data("material");
+                                $('#dropdownMenuButton').text(selectedMaterial);
+                                $('#materialInput').val(selectedMaterial);
+                            });
+                            $('#closeModalBtn').click(function () {
+                                $('#stockModal').modal('hide'); // Hide modal when "Close" button is clicked
+                            });
+                        });
+                    </script>
+
+                </div>
+
+                <script>
+                    $(document).ready(function () {
+                        $('#searchInput').on('input', function () {
+                            var searchText = $(this).val().toLowerCase();
+                            $('#dropdownMenu').find('.dropdown-item').each(function () {
+                                var text = $(this).text().toLowerCase();
+                                if (text.includes(searchText)) {
+                                    $(this).show();
+                                } else {
+                                    $(this).hide();
+                                }
+                            });
+                        });
+
+                        $('#dropdownMenu').on('click', '.dropdown-item', function (e) {
+                            var selectedItem = $(this).text();
+                            $('#dropdownMenuButton').text(selectedItem);
+                        });
+                    });
+                </script>
+                <div class="col-lg-2">
+                    <label>Enter Quantity</label><br>
+                    <input type="number" name="quantity" class="form-control" required style="border: 1px solid black;">
+                </div>
+                <div class="col-lg-2">
+                    <label>Enter start date</label><br>
+                    <input type="date" id="sdate" name="start_date" required class="form-control"
+                        style="border: 1px solid black;">
+                </div>
+
+                <div class="col-lg-2">
+                    <label>Enter end date</label><br>
+                    <input type="date" id="edate" name="end_date" required class="form-control"
+                        style="border: 1px solid black;">
+                </div>
+                <script>
+                    // Function to set the min attribute of the date input field to today's date
+                    function setMinDate() {
+                        var today = new Date();
+                        var dd = String(today.getDate()).padStart(2, '0');
+                        var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+                        var yyyy = today.getFullYear();
+                        var minDate = yyyy + '-' + mm + '-' + dd;
+
+                        document.getElementById("sdate").setAttribute("min", minDate);
+                        document.getElementById("edate").setAttribute("min", minDate);
                     }
-                });
-            });
-            $('#stockModal').on('hidden.bs.modal', function () {
-            $('#stockInfo').empty(); 
-        });
-        $('.material-option').click(function() {
-            var selectedMaterial = $(this).data("material");
-            $('#dropdownMenuButton').text(selectedMaterial); 
-            $('#materialInput').val(selectedMaterial); 
-        });
-        $('#closeModalBtn').click(function() {
-            $('#stockModal').modal('hide'); // Hide modal when "Close" button is clicked
-        });
-        });
-    </script>
-    
-</div>
 
-<script>
-$(document).ready(function() {
-    $('#searchInput').on('input', function() {
-        var searchText = $(this).val().toLowerCase();
-        $('#dropdownMenu').find('.dropdown-item').each(function() {
-            var text = $(this).text().toLowerCase();
-            if (text.includes(searchText)) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-    });
+                    // Call the setMinDate function when the page loads
+                    window.onload = setMinDate;
+                </script>
+                <div class="col-lg-2"><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="exampleModalCheckbox">
+                        <label class="form-check-label" for="exampleModalCheckbox">
+                            Multi Material ?
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <br>
 
-    $('#dropdownMenu').on('click', '.dropdown-item', function(e) {
-        var selectedItem = $(this).text();
-        $('#dropdownMenuButton').text(selectedItem);
-    });
-});
-</script>
-<div class="col-lg-2">
-    <label>Enter  Quantity</label><br>
-   <input type="number" name="quantity" class="form-control" required style="border: 1px solid black;" > 
-</div> 
-<div class="col-lg-2">
-    <label>Enter  start date</label><br>
-    <input type="date" id="sdate" name="start_date" required class="form-control" style="border: 1px solid black;">
-</div>
+                    <button class="form-control btn btn-danger">Add Lab</button>
+                    </form>
 
-<div class="col-lg-2">
-    <label>Enter  end date</label><br>
-    <input type="date" id="edate" name="end_date" required class="form-control" style="border: 1px solid black;">
-</div>
- <script>
-// Function to set the min attribute of the date input field to today's date
-function setMinDate() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
-    var yyyy = today.getFullYear();
-    var minDate = yyyy + '-' + mm + '-' + dd;
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Multi Material Modal</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-lg-10">
+                                            <form action="{{ url_for('multilab') }}" method="POST" id="newform">
+                                                <input type="hidden" class="form-control" id="modalpselect"
+                                                    placeholder="" name="pselect">
+                                                <input type="hidden" class="form-control" id="modalpname" placeholder=""
+                                                    name="pname">
+                                                <input type="hidden" class="form-control" id="modalStartDateInput"
+                                                    placeholder="Start Date" name="sdate">
+                                                <input type="hidden" class="form-control" id="modalEndDateInput"
+                                                    placeholder="End Date" name="edate">
+                                        </div>
+                                        <div class="col-lg-2">
+                                            <button type="button" class="btn btn-primary btn-sm add-fields"
+                                                style="border-radius:50%;width: 50px;height: 50px">+</button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div id="additional-fields-container"></div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="closeModalBtn1" class="btn btn-secondary"
+                                        data-dismiss="modal">Close</button>
+                                    <!-- Submit Button -->
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    document.getElementById("sdate").setAttribute("min", minDate);
-    document.getElementById("edate").setAttribute("min", minDate);
-}
+                    <script>
+                        $(document).ready(function () {
+                            var materials = [];
+                            var quantities = [];
 
-// Call the setMinDate function when the page loads
-window.onload = setMinDate;
-</script>
-<div class="col-lg-2"><br>
-        <div class="form-check">
-    <input class="form-check-input" type="checkbox" id="exampleModalCheckbox">
-    <label class="form-check-label" for="exampleModalCheckbox">
-      Multi Material ?
-    </label>
-  </div>
-</div>
-<div class="col-lg-2">
-    <br>
-    
-    <button class="form-control btn btn-danger">Add Lab</button>
-    </form>
+                            // Event handler for dynamically added dropdown menus
+                            $('#additional-fields-container').on('click', '.material-option', function () {
+                                var selectedOption = $(this).data("material");
+                                var index = $(this).closest('.row').index(); // Get the index of the row
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Multi Material Modal</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-lg-10">
-            <form action="{{ url_for('multilab') }}" method="POST" id="newform">
-              <input type="hidden" class="form-control" id="modalpselect" placeholder="" name="pselect">
-              <input type="hidden" class="form-control" id="modalpname" placeholder="" name="pname">
-              <input type="hidden" class="form-control" id="modalStartDateInput" placeholder="Start Date" name="sdate">
-              <input type="hidden" class="form-control" id="modalEndDateInput" placeholder="End Date" name="edate">
-          </div>
-          <div class="col-lg-2">
-            <button type="button" class="btn btn-primary btn-sm add-fields" style="border-radius:50%;width: 50px;height: 50px">+</button>
-          </div>
-        </div>
-        <br>
-        <div id="additional-fields-container"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="closeModalBtn1" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary" >Submit</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+                                // Update dropdown button text and hidden input value
+                                var dropdownButton = $(this).closest('.dropdown').find('.dropdown-toggle');
+                                dropdownButton.text(selectedOption);
 
-<script>
-$(document).ready(function() {
-    var materials = [];
-    var quantities = [];
+                                // Get the corresponding quantity input
+                                var quantityInput = $(this).closest('.row').find('input[name="quantity[]"]');
 
-    // Event handler for dynamically added dropdown menus
-    $('#additional-fields-container').on('click', '.material-option', function() {
-        var selectedOption = $(this).data("material");
-        var index = $(this).closest('.row').index(); // Get the index of the row
+                                // Push selected material to materials array
+                                materials[index] = selectedOption;
 
-        // Update dropdown button text and hidden input value
-        var dropdownButton = $(this).closest('.dropdown').find('.dropdown-toggle');
-        dropdownButton.text(selectedOption);
+                                // Retrieve quantity from the input field
+                                var quantityVal = quantityInput.val() || ''; // Use empty string if quantity is empty
+                                var quantityArray = quantityVal.split(',');
 
-        // Get the corresponding quantity input
-        var quantityInput = $(this).closest('.row').find('input[name="quantity[]"]');
+                                // Log materials and quantities arrays to console
+                                console.log("Materials:", materials);
+                                console.log("Quantities:", quantityArray);
 
-        // Push selected material to materials array
-        materials[index] = selectedOption;
+                                // Store quantities in quantities array
+                                quantities[index] = quantityArray;
 
-        // Retrieve quantity from the input field
-        var quantityVal = quantityInput.val() || ''; // Use empty string if quantity is empty
-        var quantityArray = quantityVal.split(',');
+                                // Perform AJAX request to fetch quantity
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/lab',
+                                    data: { 'material': selectedOption },
+                                    success: function (response) {
+                                        var quantity = response.quantity;
+                                        if (quantity != null && quantity != undefined) {
+                                            if (quantity != 0) {
+                                                alert(selectedOption + ' is in stock and has ' + quantity + ' quantity.');
+                                            } else {
+                                                alert(selectedOption + ' is out of stock.');
+                                            }
+                                        } else {
+                                            alert('Error: Quantity not available.');
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        alert('Error fetching quantity: ' + error);
+                                    }
+                                });
+                            });
 
-        // Log materials and quantities arrays to console
-        console.log("Materials:", materials);
-        console.log("Quantities:", quantityArray);
-
-        // Store quantities in quantities array
-        quantities[index] = quantityArray;
-
-        // Perform AJAX request to fetch quantity
-        $.ajax({
-            type: 'POST',
-            url: '/lab',
-            data: {'material': selectedOption},
-            success: function(response) {
-                var quantity = response.quantity;
-                if (quantity != null && quantity != undefined) {
-                    if (quantity != 0) {
-                        alert(selectedOption + ' is in stock and has ' + quantity + ' quantity.');
-                    } else {
-                        alert(selectedOption + ' is out of stock.');
-                    }
-                } else {
-                    alert('Error: Quantity not available.');
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('Error fetching quantity: ' + error);
-            }
-        });
-    });
-
-    // Function to add new fields
-    function addFields() {
-        var index = $('.row').length; // Get the number of rows to create unique identifiers
-        var newFields = `
+                            // Function to add new fields
+                            function addFields() {
+                                var index = $('.row').length; // Get the number of rows to create unique identifiers
+                                var newFields = `
             <div class="row">
                 <div class="col-lg-6">
                     <div class="dropdown">
@@ -323,273 +339,256 @@ $(document).ready(function() {
                 </div>
             </div><br>
         `;
-        $('#additional-fields-container').append(newFields);
-    }
+                                $('#additional-fields-container').append(newFields);
+                            }
 
-    $('.add-fields').click(function() {
-        addFields();
-    });
-		 $('#additional-fields-container').on('click', '.remove-fields', function() {
-            $(this).closest('.row').remove();
-        });
-		$('#additional-fields-container').on('click', '.remove-fields', function() {
-            $(this).closest('.row').remove();
-        });
+                            $('.add-fields').click(function () {
+                                addFields();
+                            });
+                            $('#additional-fields-container').on('click', '.remove-fields', function () {
+                                $(this).closest('.row').remove();
+                            });
+                            $('#additional-fields-container').on('click', '.remove-fields', function () {
+                                $(this).closest('.row').remove();
+                            });
 
-    $('#newform').submit(function(event) {
-        event.preventDefault(); // Prevent default form submission
+                            $('#newform').submit(function (event) {
+                                event.preventDefault(); // Prevent default form submission
 
-        // Create a new FormData object
-        var formData = new FormData(this);
+                                // Create a new FormData object
+                                var formData = new FormData(this);
 
-        // Add materials and quantities arrays to the FormData object
-        formData.append('materials', JSON.stringify(materials));
-        var quantities = [];
-$('input[name="quantity[]"]').each(function() {
-    quantities.push($(this).val());
-});
+                                // Add materials and quantities arrays to the FormData object
+                                formData.append('materials', JSON.stringify(materials));
+                                var quantities = [];
+                                $('input[name="quantity[]"]').each(function () {
+                                    quantities.push($(this).val());
+                                });
 
-quantities.forEach(function(quantity) {
-    formData.append('quantities', quantity);
-});
-        $.ajax({
-            type: 'POST',
-            url: 'multilab',
-            data: formData,
-            processData: false,  // Prevent jQuery from automatically processing the data
-            contentType: false,  // Prevent jQuery from automatically setting the content type
-            success: function(response) {
-                // Handle success response here
-                window.location.href = "/lab";
-            },
-            error: function(xhr, status, error) {
-                // Handle error response here
-                console.error(error);
-            }
-        });
-    });
+                                quantities.forEach(function (quantity) {
+                                    formData.append('quantities', quantity);
+                                });
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'multilab',
+                                    data: formData,
+                                    processData: false,  // Prevent jQuery from automatically processing the data
+                                    contentType: false,  // Prevent jQuery from automatically setting the content type
+                                    success: function (response) {
+                                        // Handle success response here
+                                        window.location.href = "/lab";
+                                    },
+                                    error: function (xhr, status, error) {
+                                        // Handle error response here
+                                        console.error(error);
+                                    }
+                                });
+                            });
 
-    // Checkbox change handler
-    $('#exampleModalCheckbox').change(function() {
-        if ($(this).is(":checked")) {
-            // Get values from input fields
-            var pselect = $('#purposeSelect').val();
-            var pname = $('#pname').val();
-            var sdate = $('#sdate').val();
-            var edate = $('#edate').val();
+                            // Checkbox change handler
+                            $('#exampleModalCheckbox').change(function () {
+                                if ($(this).is(":checked")) {
+                                    // Get values from input fields
+                                    var pselect = $('#purposeSelect').val();
+                                    var pname = $('#pname').val();
+                                    var sdate = $('#sdate').val();
+                                    var edate = $('#edate').val();
 
-            // Display values in modal input fields
-            $('#modalpselect').val(pselect);
-            $('#modalpname').val(pname);
-            $('#modalStartDateInput').val(sdate);
-            $('#modalEndDateInput').val(edate);
+                                    // Display values in modal input fields
+                                    $('#modalpselect').val(pselect);
+                                    $('#modalpname').val(pname);
+                                    $('#modalStartDateInput').val(sdate);
+                                    $('#modalEndDateInput').val(edate);
 
-            // Show the modal
-            $('#exampleModal').modal('show');
-        } else {
-            // Hide modal when "Close" button is clicked
-            $('#closeModalBtn1').click(function() {
-                $('#exampleModal').modal('hide');
-            });
-        }
-    });
-});
-</script>
-
-
-</div>
-             
-        </div>
-      
-        </div>
-        </div>
-            </div><br>
-	    <div class="container-fluid">
-            <div class="card mb-4">
-                                <div class="card-header">
-                                    
-                                            <i class="fas fa-table me-1"></i>
-                                    Lab List
-                                       
-                                </div>
-                                <div class="card-body">
-					       <div class="container">
-      <div class="header_wrap">
-        <div class="num_rows">
-
-                                <div class="form-group">        <!--            Show Numbers Of Rows            -->
-                                        <select class  ="form-control" name="state" id="maxRows">
+                                    // Show the modal
+                                    $('#exampleModal').modal('show');
+                                } else {
+                                    // Hide modal when "Close" button is clicked
+                                    $('#closeModalBtn1').click(function () {
+                                        $('#exampleModal').modal('hide');
+                                    });
+                                }
+                            });
+                        });
+                    </script>
 
 
-                                                 <option value="10">10</option>
-                                                 <option value="15">15</option>
-                                                 <option value="20">20</option>
-                                                 <option value="50">50</option>
-                                                 <option value="70">70</option>
-                                                 <option value="100">100</option>
-            <option value="5000">Show ALL Rows</option>
-                                                </select>
-
-                                </div>
-        </div>
-        <div class="tb_search">
-<input type="text" id="search_input_all" onkeyup="FilterkeyWord_all_table()" placeholder="Search.." class="form-control">
-        </div>
-      </div>
-                                    <table class="table table-bordered  table-class" id= "table-id">
-                                        <thead class="thead-dark">
-                                            <tr>
-						<th> Name </th>
-						<th>Ticket Number</th>
-                                                <th>Purpose</th>
-                                                <th>Project Name</th>                                              
-                                                <th>Material</th>
-                                                <th>Quantity</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
-                                                <th>Status</th>
-                                                
-                                             
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-						{% for ticket, rows in grouped_data.items() %}
-        {% for row in rows %}
-        <tr>
-          
-	   <td> <a href="#" class="open-modal" data-id="{{ row[0] }}" style="text-decoration: none;color: black">{{ row[1] }}</a> </td>
-            {% if loop.first %}
-            <td rowspan="{{ rows|length }}">
-		     {{ row[12] }}
-	    </td>
-            {% endif %} 
-            <td>{{ row[2] }}</td>
-            <td>{{ row[9] }}</td>
-            
-            <td>{{ row[3] }}</td>
-            <td>{{ row[4] }}</td>
-            <td>{{ row[5] }}</td>
-            <td>{{ row[6] }}</td>
-            <td>{{ row[7] }}</td>
-        
-
-           
-           
-        </tr>
-        {% endfor %}
-	{% endfor %}
-                                        </tbody>
-                                    </table>
-				     <div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Additional Details</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <!-- Display details here -->
-                <div id="modal-details">
                 </div>
+
             </div>
 
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
-</div>
+</div><br>
+<div class="container-fluid">
+    <div class="card mb-4">
+        <div class="card-header">
 
-				    <div class='pagination-container'>
-                                <nav>
-                                  <ul class="pagination">
-                                   <!-- Here the JS Function Will Add the Rows -->
-                                  </ul>
-                                </nav>
-                        </div>
-      <div class="rows_count">Showing 11 to 20 of 91 entries</div>
+            <i class="fas fa-table me-1"></i>
+            Lab List
 
-</div> <!--             End of Container -->
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="header_wrap">
+                    <div class="num_rows">
+
+                        
+                <table class="table table-bordered  table-class" id="datatablesSimple">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th> Name </th>
+                            <th>Ticket Number</th>
+                            <th>Purpose</th>
+                            <th>Project Name</th>
+                            <th>Material</th>
+                            <th>Quantity</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket, rows in grouped_data.items() %}
+                        {% for row in rows %}
+                        <tr>
+
+                            <td> <a href="#" class="open-modal" data-id="{{ row[0] }}"
+                                    style="text-decoration: none;color: black">{{ row[1] }}</a> </td>
+                            {% if loop.first %}
+                            <td rowspan="{{ rows|length }}">
+                                {{ row[12] }}
+                            </td>
+                            {% endif %}
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[9] }}</td>
+
+                            <td>{{ row[3] }}</td>
+                            <td>{{ row[4] }}</td>
+                            <td>{{ row[5] }}</td>
+                            <td>{{ row[6] }}</td>
+                            <td>{{ row[7] }}</td>
+
+
+
+
+                        </tr>
+                        {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Additional Details</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <!-- Display details here -->
+                                <div id="modal-details">
                                 </div>
-</div>
+                            </div>
 
-<script>
-$(document).ready(function(){
-    $(".open-modal").click(function(){
-        var id = $(this).data('id');
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        // Fetch details via AJAX request
-        $.ajax({
-            url: '/lab',
-            method: 'GET',
-            data: {mid: id},
-            success: function(response){
-                // Check if response contains data
-                if (response) {
-                    // Populate modal body with details
-                    $("#modal-details").html(
-				     "<p>Ticket No: " + response.ticket_no + "</p>" +
-                        "<p> Name: " + response.name + "</p>" +
-                        "<p>Material: " + response.material + "</p>" +
-                        "<p>Part Number: " + response.Part_Number + "</p>" +
-                        "<p>Status: " + response.status + "</p>" +
-                        "<p>Serial Number: " + response.serial_number + "</p>"
-                    );
-                } else {
-                    // If response is empty or does not contain data
-                    $("#modal-details").text("No data available");
-                }
+                <div class='pagination-container'>
+                    <nav>
+                        <ul class="pagination">
+                            <!-- Here the JS Function Will Add the Rows -->
+                        </ul>
+                    </nav>
+                </div>
+                <div class="rows_count">Showing 11 to 20 of 91 entries</div>
 
-                // Open the modal
-                $("#myModal").modal('show');
-            },
-            error: function(xhr, status, error){
-                // Handle error
-                console.error(error);
-                // Update modal title and body in case of error
-                $(".modal-title").text('Error');
-                $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
+            </div> <!--             End of Container -->
+        </div>
+    </div>
 
-                // Open the modal
-                $("#myModal").modal('show');
-            }
+    <script>
+        $(document).ready(function () {
+            $(".open-modal").click(function () {
+                var id = $(this).data('id');
+
+                // Fetch details via AJAX request
+                $.ajax({
+                    url: '/lab',
+                    method: 'GET',
+                    data: { mid: id },
+                    success: function (response) {
+                        // Check if response contains data
+                        if (response) {
+                            // Populate modal body with details
+                            $("#modal-details").html(
+                                "<p>Ticket No: " + response.ticket_no + "</p>" +
+                                "<p> Name: " + response.name + "</p>" +
+                                "<p>Material: " + response.material + "</p>" +
+                                "<p>Part Number: " + response.Part_Number + "</p>" +
+                                "<p>Status: " + response.status + "</p>" +
+                                "<p>Serial Number: " + response.serial_number + "</p>"
+                            );
+                        } else {
+                            // If response is empty or does not contain data
+                            $("#modal-details").text("No data available");
+                        }
+
+                        // Open the modal
+                        $("#myModal").modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error(error);
+                        // Update modal title and body in case of error
+                        $(".modal-title").text('Error');
+                        $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
+
+                        // Open the modal
+                        $("#myModal").modal('show');
+                    }
+                });
+            });
+            $(".modal-footer .btn-danger").click(function () {
+                $("#myModal").modal('hide');
+            });
+            $(".close").click(function () {
+                $("#myModal").modal('hide');
+            });
+
         });
-    });
-                $(".modal-footer .btn-danger").click(function() {
-    $("#myModal").modal('hide');
-});
-                  $(".close").click(function() {
-    $("#myModal").modal('hide');
-});
-
-});
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
 
-{% endblock %}
-       
-{% else %}
-<script>
- // Display a SweetAlert message and logout after 5 seconds
- window.onload = function() {
-     Swal.fire({
-         title: 'Access Denied!',
-         text: 'You are not allowed to view this page.',
-         icon: 'warning',
-         timer: 5000, // Automatically close the alert after 5 seconds
-         timerProgressBar: true,
-         showConfirmButton: false
-     }).then((result) => {
-         // Redirect to logout page after the alert is closed
-         if (result.dismiss === Swal.DismissReason.timer) {
-             window.location.href = "/logout";
-         }
-     });
- };
-</script>
-{% endif %}
+    {% endblock %}
+
+    {% else %}
+    <script>
+        // Display a SweetAlert message and logout after 5 seconds
+        window.onload = function () {
+            Swal.fire({
+                title: 'Access Denied!',
+                text: 'You are not allowed to view this page.',
+                icon: 'warning',
+                timer: 5000, // Automatically close the alert after 5 seconds
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then((result) => {
+                // Redirect to logout page after the alert is closed
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    window.location.href = "/logout";
+                }
+            });
+        };
+    </script>
+    {% endif %}

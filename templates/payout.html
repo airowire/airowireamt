@@ -1,6 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-{% if session['tname'] == 'noc' or session['tname'] == 'project'  %}
+{% if session['tname'] == 'noc' or session['tname'] == 'project' %}
 {% extends 'sidebar.html' %}
 {% block content %}
 <!-- jQuery library -->
@@ -13,255 +13,241 @@
 
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h5 class=" mb-0 text-black">Payout  Dashboard</h5>
+        <h5 class=" mb-0 text-black">Payout Dashboard</h5>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
     </div>
     <div class="card mb-4">
-        <div class="card-header" >
-                                    <i class="fas fa-table me-1"></i>
-                                    Add Payout
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <form action="{{ url_for('payoutadd') }}" method="post" >
-                                            <label>Enter  Activity</label><br>
-                                            <textarea name="remarks" required class="form-control" rows="1" cols="4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Add Payout
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <form action="{{ url_for('payoutadd') }}" method="post">
+                        <label>Enter Activity</label><br>
+                        <textarea name="remarks" required class="form-control" rows="1" cols="4">
 
                                             </textarea>
-                                            
-                                        </div>
+
+                </div>
                 <div class="col-lg-2">
-                    
-                        
-                        <label>Enter Start date</label><br>
-    <input type="date" name="date" id="sdate" class="form-control" required >
-    <script>
-    // Function to set the min attribute of the date input field
-    function setMinDate() {
-        var today = new Date();
-        // Calculate the date 7 days ago
-        var pastDate = new Date(today);
-        pastDate.setDate(today.getDate() - 7);
 
-        // Format the past date to yyyy-mm-dd
-        var dd = String(pastDate.getDate()).padStart(2, '0');
-        var mm = String(pastDate.getMonth() + 1).padStart(2, '0'); // January is 0!
-        var yyyy = pastDate.getFullYear();
-        var minDate = yyyy + '-' + mm + '-' + dd;
 
-        // Set the min attribute of the date input field
-        document.getElementById("sdate").setAttribute("min", minDate);
+                    <label>Enter Start date</label><br>
+                    <input type="date" name="date" id="sdate" class="form-control" required>
+                    <script>
+                        // Function to set the min attribute of the date input field
+                        function setMinDate() {
+                            var today = new Date();
+                            // Calculate the date 7 days ago
+                            var pastDate = new Date(today);
+                            pastDate.setDate(today.getDate() - 7);
 
-        // Disable dates fetched from the database
-        var disabledDates = {{ dates | tojson }};
-        var inputDate = document.getElementById("sdate");
-        inputDate.addEventListener('input', function() {
-            var selectedDate = new Date(this.value);
-            var formattedDate = selectedDate.getFullYear() + '-' + String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + String(selectedDate.getDate()).padStart(2, '0');
-            if (disabledDates.includes(formattedDate)) {
-                this.value = ''; // Clear the input if the selected date is disabled
-                alert('This date is disabled.');
-            }
-        });
+                            // Format the past date to yyyy-mm-dd
+                            var dd = String(pastDate.getDate()).padStart(2, '0');
+                            var mm = String(pastDate.getMonth() + 1).padStart(2, '0'); // January is 0!
+                            var yyyy = pastDate.getFullYear();
+                            var minDate = yyyy + '-' + mm + '-' + dd;
+
+                            // Set the min attribute of the date input field
+                            document.getElementById("sdate").setAttribute("min", minDate);
+
+                            // Disable dates fetched from the database
+                            var disabledDates = {{ dates | tojson
+                        }};
+                        var inputDate = document.getElementById("sdate");
+                        inputDate.addEventListener('input', function () {
+                            var selectedDate = new Date(this.value);
+                            var formattedDate = selectedDate.getFullYear() + '-' + String(selectedDate.getMonth() + 1).padStart(2, '0') + '-' + String(selectedDate.getDate()).padStart(2, '0');
+                            if (disabledDates.includes(formattedDate)) {
+                                this.value = ''; // Clear the input if the selected date is disabled
+                                alert('This date is disabled.');
+                            }
+                        });
     }
 
-    // Call the setMinDate function when the page loads
-    window.onload = setMinDate;
-</script>
+                        // Call the setMinDate function when the page loads
+                        window.onload = setMinDate;
+                    </script>
 
-		</div>
+                </div>
                 <div class="col-lg-2">
-                    
-                        
+
+
                     <label>Enter End date</label><br>
-			<input type="date" name="enddate" id="edate"  class="form-control" required >
-            </div>
-                
-                
+                    <input type="date" name="enddate" id="edate" class="form-control" required>
+                </div>
+
+
                 <div class="col-lg-2">
-                    <label>Enter  start time</label><br>
+                    <label>Enter start time</label><br>
                     <input type="time" name="start_time" required class="form-control">
                 </div>
                 <div class="col-lg-2">
-                    <label>Enter  end time</label><br>
+                    <label>Enter end time</label><br>
                     <input type="time" name="end_time" required class="form-control">
                 </div>
                 <div class="col-lg-2">
                     <br>
-                    
+
                     <button class="form-control btn btn-danger">Add Payout</button>
                     </form>
                 </div>
-        </div>
-        </div>
-            </div><br>
-            <div class="card mb-4" >
-                                <div class="card-header" style="">
-                                    
-                                            <i class="fas fa-table me-1"></i>
-                                    Payout List
-                                       
-                                </div>
-                                <div class="card-body" >
-				 <div class="container">
-      <div class="header_wrap">
-        <div class="num_rows">
-
-                                <div class="form-group">        <!--            Show Numbers Of Rows            -->
-                                        <select class  ="form-control" name="state" id="maxRows">
-
-
-                                                 <option value="10">10</option>
-                                                 <option value="15">15</option>
-                                                 <option value="20">20</option>
-                                                 <option value="50">50</option>
-                                                 <option value="70">70</option>
-                                                 <option value="100">100</option>
-            <option value="5000">Show ALL Rows</option>
-                                                </select>
-
-                                </div>
-        </div>
-        <div class="tb_search">
-<input type="text" id="search_input_all" onkeyup="FilterkeyWord_all_table()" placeholder="Search.." class="form-control">
-        </div>
-      </div>
-                                    <table class="table table-bordered  table-class" id= "table-id">
-                                        <thead class="thead-dark">
-                                            <tr>
-                                                <th>Activity</th>
-                                                <th>Name of the Employee</th>
-                                                <th>Start Date</th>
-                                                <th>End Date</th>
-                                                
-                                                <th>start time</th>
-                                                <th>end time</th>
-                                                <th>Status</th>
-                                                
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for row in data %}
-        <tr>
-          
-		<td>
-			                                    <a href="#" class="open-modal" data-id="{{ row[0] }}" style="text-decoration: none;color: black">{{ row[4] }}</a>
-		</td>
-            <td>{{ row[1] }}</td>
-            <td>{{ row[2] }}</td>
-            <td>{{ row[3] }}</td>
-            
-            <td>{{ row[6] }}</td>
-            <td>{{ row[7] }}</td>
-            <td>{{ row[5] }}</td>
-            
-           
-           
-           
-        </tr>
-        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-</div>
-
-  <div class="modal" id="myModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Additional Details</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+        </div>
+    </div><br>
+    <div class="card mb-4">
+        <div class="card-header" style="">
 
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <!-- Display details here -->
-                <div id="modal-details">
+            <i class="fas fa-table me-1"></i>
+            Payout List
+
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="header_wrap">
+                    <div class="num_rows">
+
+                    </div>
+                    
+                </div>
+                <table class="table table-bordered  table-class" id="datatablesSimple">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Activity</th>
+                            <th>Name of the Employee</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+
+                            <th>start time</th>
+                            <th>end time</th>
+                            <th>Status</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr>
+
+                            <td>
+                                <a href="#" class="open-modal" data-id="{{ row[0] }}"
+                                    style="text-decoration: none;color: black">{{ row[4] }}</a>
+                            </td>
+                            <td>{{ row[1] }}</td>
+                            <td>{{ row[2] }}</td>
+                            <td>{{ row[3] }}</td>
+
+                            <td>{{ row[6] }}</td>
+                            <td>{{ row[7] }}</td>
+                            <td>{{ row[5] }}</td>
+
+
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Additional Details</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <!-- Display details here -->
+                        <div id="modal-details">
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
         </div>
-    </div>
-  </div>
 
-<script>
-$(document).ready(function(){
-    $(".open-modal").click(function(){
-        var id = $(this).data('id');
+        <script>
+            $(document).ready(function () {
+                $(".open-modal").click(function () {
+                    var id = $(this).data('id');
 
-        // Fetch details via AJAX request
-        $.ajax({
-            url: '/mapayoutapprove',
-            method: 'GET',
-            data: {mid: id},
-            success: function(response){
-                if (response) {
-                    $("#modal-details").html(
-                        "<p> Name: " + response.name + "</p>" +
-                        "<p> Activity: " + response.Activity + "</p>" +
-                        "<p> Start Date: " + response.startdate + "</p>" +
-                        "<p>End Date: " + response.enddate + "</p>" +
-                        "<p>Start Time: " + response.start_time + "</p>" +
-                        "<p>End Time: " + response.end_time + "</p>" +
-                        "<p>Status: " + response.status + "</p>" +
-                        "<p>Reject Reason: " + response.reason + "</p>"
-                    );
-                } else {
-                    // If response is empty or does not contain data
-                    $("#modal-details").text("No data available");
-                }
+                    // Fetch details via AJAX request
+                    $.ajax({
+                        url: '/mapayoutapprove',
+                        method: 'GET',
+                        data: { mid: id },
+                        success: function (response) {
+                            if (response) {
+                                $("#modal-details").html(
+                                    "<p> Name: " + response.name + "</p>" +
+                                    "<p> Activity: " + response.Activity + "</p>" +
+                                    "<p> Start Date: " + response.startdate + "</p>" +
+                                    "<p>End Date: " + response.enddate + "</p>" +
+                                    "<p>Start Time: " + response.start_time + "</p>" +
+                                    "<p>End Time: " + response.end_time + "</p>" +
+                                    "<p>Status: " + response.status + "</p>" +
+                                    "<p>Reject Reason: " + response.reason + "</p>"
+                                );
+                            } else {
+                                // If response is empty or does not contain data
+                                $("#modal-details").text("No data available");
+                            }
 
-                // Open the modal
-                $("#myModal").modal('show');
-            },
-            error: function(xhr, status, error){
-                // Handle error
-                console.error(error);
-                // Update modal title and body in case of error
-                $(".modal-title").text('Error');
-                $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
+                            // Open the modal
+                            $("#myModal").modal('show');
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.error(error);
+                            // Update modal title and body in case of error
+                            $(".modal-title").text('Error');
+                            $("#modal-details").html('<p>An error occurred while fetching the details.</p>');
 
-                // Open the modal
-                $("#myModal").modal('show');
-            }
-        });
-    });
-                $(".modal-footer .btn-danger").click(function() {
-    $("#myModal").modal('hide');
-});
-                  $(".close").click(function() {
-    $("#myModal").modal('hide');
-});
+                            // Open the modal
+                            $("#myModal").modal('show');
+                        }
+                    });
+                });
+                $(".modal-footer .btn-danger").click(function () {
+                    $("#myModal").modal('hide');
+                });
+                $(".close").click(function () {
+                    $("#myModal").modal('hide');
+                });
 
-});
-</script>
+            });
+        </script>
 
-{% endblock %}
-       
-{% else %}
-<script>
- // Display a SweetAlert message and logout after 5 seconds
- window.onload = function() {
-     Swal.fire({
-         title: 'Access Denied!',
-         text: 'You are not allowed to view this page.',
-         icon: 'warning',
-         timer: 5000, // Automatically close the alert after 5 seconds
-         timerProgressBar: true,
-         showConfirmButton: false
-     }).then((result) => {
-         // Redirect to logout page after the alert is closed
-         if (result.dismiss === Swal.DismissReason.timer) {
-             window.location.href = "/logout";
-         }
-     });
- };
-</script>
-{% endif %}
+        {% endblock %}
+
+        {% else %}
+        <script>
+            // Display a SweetAlert message and logout after 5 seconds
+            window.onload = function () {
+                Swal.fire({
+                    title: 'Access Denied!',
+                    text: 'You are not allowed to view this page.',
+                    icon: 'warning',
+                    timer: 5000, // Automatically close the alert after 5 seconds
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                }).then((result) => {
+                    // Redirect to logout page after the alert is closed
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.href = "/logout";
+                    }
+                });
+            };
+        </script>
+        {% endif %}

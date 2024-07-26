@@ -24,7 +24,7 @@
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
     <style>
         .password-requirements {
-            
+            font-size: small;
             /* Adjust the size to fit on one line if needed */
             color: #666;
             /* Lighter color for subtlety */
@@ -32,7 +32,7 @@
             /* Spacing between input and text */
             white-space: nowrap;
             /* Prevents text from breaking into multiple lines */
-            overflow:hidden;
+            overflow: hidden;
             text-overflow: ellipsis;
             /* Adds ... if text is too long */
         }
@@ -107,8 +107,7 @@
                             <div class="form-group row">
                                 <div class="col-sm-6 mb-3 mb-sm-0">
                                     <input type="password" class="form-control form-control-user"
-                                        id="exampleInputPassword" name="password"
-                                        placeholder="password"
+                                        id="exampleInputPassword" name="password" placeholder="password"
                                         pattern="(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.*[0-9]).{8,}" required>
                                     <span class="icon valid"><i class="fas fa-check"></i></span>
                                     <span class="icon invalid"><i class="fas fa-times"></i></span>
@@ -118,7 +117,8 @@
                                         id="exampleRepeatPassword" placeholder="Repeat Password" name="repassword">
                                 </div>
                             </div>
-                            <p class="password-requirements">Password : 8 characters, 1 number and 1 special character</p>
+                            <p class="password-requirements">Password : 8 characters, 1 number and 1 special character
+                            </p>
                             <div class="form-group">
                                 <select name="tname" class="form-control" style="border-radius: 50px;height: 50px;">
                                     <option disabled>Select Team</option>

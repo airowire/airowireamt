@@ -15,6 +15,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap">
+
 </head>
 
 <body>
@@ -22,7 +24,7 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="profile-buttons button">
-                    <h4 style="color:blue;">MY PROFILE </h4>
+                    <h4 style="color:rgb(220, 143, 9); ">MY PROFILE </h4>
                 </div>
                 <div class="profile-buttons">
                     <button class="button" data-toggle="modal" data-target="#changePasswordModal">
@@ -32,6 +34,7 @@
                     </button>
                 </div>
             </div>
+            <span class="span1"></span>
             <div class="profile-content">
                 <div class="profile-pic">
                     <img src="{{ url_for('static', filename='uploads/' + data['photo']) if data['photo'] else url_for('static', filename='img/undraw_profile.svg') }}"
@@ -50,7 +53,7 @@
                             </tr>
                             <tr>
                                 <td><strong>Email </strong></td>
-                                <td >
+                                <td>
                                     <span id="email-text" class="text-capitalize">{{ data['email'] }}</span>
                                     <input type="email" id="email-input" name="email" class="form-control d-none"
                                         value="{{ data['email'] }}">
@@ -128,7 +131,7 @@
         </div>
     </div>
 
-   
+
 
     <!-- FontAwesome -->
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
