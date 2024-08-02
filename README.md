@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-# amtairo
-=======
-# amt
->>>>>>> master
