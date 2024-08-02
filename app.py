@@ -5,7 +5,10 @@ from flask import Flask, Response, jsonify, render_template, request, redirect, 
 import pandas as pd
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash,generate_password_hash
+<<<<<<< HEAD
 from werkzeug.utils import secure_filename
+=======
+>>>>>>> 7d16f5f9b15b8513aada6a062445b079dc821c51
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -22,12 +25,17 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
+<<<<<<< HEAD
 from elasticapm.contrib.flask import ElasticAPM
+=======
+# from elasticapm.contrib.flask import ElasticAPM
+>>>>>>> 7d16f5f9b15b8513aada6a062445b079dc821c51
 from flask_apscheduler import APScheduler
 import socket
 
 app = Flask(__name__)
 
+<<<<<<< HEAD
 app.config['ELASTIC_APM'] = {
  'SERVICE_NAME': 'airowiretool',
  'SECRET_TOKEN': 'bERbdkVIhvFES2Qvvc',
@@ -44,6 +52,26 @@ app.secret_key = 'xyzsdfg'
 app.config['MYSQL_HOST'] = 'localhost'    #10.102.145.1
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'Root@1234'
+=======
+# app.config['ELASTIC_APM'] = {
+#  'SERVICE_NAME': 'airowiretool',
+#  'SECRET_TOKEN': 'amtapp',
+#  'SERVER_URL': 'https://10.10.100.49:8200',
+#  'ENVIRONMENT': 'my-environment',
+#  'VERIFY_SERVER_CERT': True,
+#  'SERVER_CERT': 'fleet.crt',
+#  'LOG_LEVEL': 'debug',
+#  'DEBUG': True,
+#  }
+
+# apm = ElasticAPM(app)
+
+app.secret_key = 'xyzsdfg'
+
+app.config['MYSQL_HOST'] = ''
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''
+>>>>>>> 7d16f5f9b15b8513aada6a062445b079dc821c51
 app.config['MYSQL_DB'] = 'amt'
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -3156,9 +3184,14 @@ def payout_mail_reject(labId):
     Hi {username},
     
     Your Payout request dated from {data[2]} to {data[3]} has been rejected by the manager.
+<<<<<<< HEAD
 
     Reason={data[8]}
 
+=======
+    
+    Reason={data[8]}
+>>>>>>> 7d16f5f9b15b8513aada6a062445b079dc821c51
     
     """
     msg = MIMEMultipart()
@@ -3177,6 +3210,7 @@ def payout_mail_reject(labId):
         print(f"Failed to send email: {e}")
         # Log the error and return
         return f"Failed to send email: {e}"
+<<<<<<< HEAD
 
 @app.route('/user_certificate')
 def user_certificate():
@@ -3326,6 +3360,9 @@ def proofsubmit():
             </script>
         """    
     
+=======
+        
+>>>>>>> 7d16f5f9b15b8513aada6a062445b079dc821c51
 if __name__ == "__main__":
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         scheduler.start()
