@@ -5,6 +5,7 @@ from flask import Flask, Response, jsonify, render_template, request, redirect, 
 import pandas as pd
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash,generate_password_hash
+from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
@@ -21,7 +22,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-# from elasticapm.contrib.flask import ElasticAPM
+#from elasticapm.contrib.flask import ElasticAPM
 from flask_apscheduler import APScheduler
 import socket
 
@@ -29,20 +30,18 @@ app = Flask(__name__)
 
 # app.config['ELASTIC_APM'] = {
 #  'SERVICE_NAME': 'airowiretool',
-#  'SECRET_TOKEN': 'amtapp',
-#  'SERVER_URL': 'https://10.10.100.49:8200',
+#  'SECRET_TOKEN': 'bERbdkVIhvFES2Qvvc',
+#  'SERVER_URL': 'https://96bfa50fb8ee4c468ab50a6f7ce1c590.apm.eastus2.azure.elastic-cloud.com:443',
 #  'ENVIRONMENT': 'my-environment',
-#  'VERIFY_SERVER_CERT': True,
-#  'SERVER_CERT': 'fleet.crt',
 #  'LOG_LEVEL': 'debug',
 #  'DEBUG': True,
 #  }
 
-# apm = ElasticAPM(app)
+#apm = ElasticAPM(app)
 
 app.secret_key = 'xyzsdfg'
 
-app.config['MYSQL_HOST'] = ''
+app.config['MYSQL_HOST'] = 'localhost'    #10.102.145.1
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'amt'
@@ -88,6 +87,7 @@ def login():
             session['email'] = user['email']
             session['type'] = user['type']
             session['tname'] = user['tname']
+            flash("Login Succesfull")
             return redirect(url_for('dashboard'))
         else:
             message = 'Please enter correct email / password! or account has not approved'
@@ -208,7 +208,7 @@ def register():
         else:
             cursor.execute('INSERT INTO user VALUES (NULL, %s, %s, %s,%s,%s,%s,%s)', (uname,hashed_password,'user',tname,designation,'Not_Approved',email))
             mysql.connection.commit()
-            message = 'You have successfully registered!'
+            flash("Approval pending with manager")
 
             # Send email notification
             try:
@@ -2374,6 +2374,7 @@ def edlab():
             cur = mysql.connection.cursor()
             cur.execute("UPDATE lab SET end_date=%s  WHERE id = %s", (end_date,id,))
             mysql.connection.commit()
+            internal_demo_return_extend()
             cur.close()
             return redirect('/rlab')
         return redirect('/login')
@@ -2590,25 +2591,25 @@ def doem():
 
 
 
-@scheduler.task('interval', id='check_and_send_emails_60_days', hours=24)
-def scheduled_task_60_days():
-    with app.app_context():
-        query_and_send_emails(60)
+# @scheduler.task('interval', id='check_and_send_emails_60_days', hours=24)
+# def scheduled_task_60_days():
+#     with app.app_context():
+#         query_and_send_emails(60)
 
-@scheduler.task('interval', id='check_and_send_emails_30_days', hours=24)
-def scheduled_task_30_days():
-    with app.app_context():
-        query_and_send_emails(30)
+# @scheduler.task('interval', id='check_and_send_emails_30_days', hours=24)
+# def scheduled_task_30_days():
+#     with app.app_context():
+#         query_and_send_emails(30)
 
-@scheduler.task('interval', id='check_and_send_emails_15_days', hours=24)
-def scheduled_task_15_days():
-    with app.app_context():
-        query_and_send_emails(15)
+# @scheduler.task('interval', id='check_and_send_emails_15_days', hours=24)
+# def scheduled_task_15_days():
+#     with app.app_context():
+#         query_and_send_emails(15)
 
-@scheduler.task('interval', id='check_and_send_emails_12_hours', hours=1)
-def scheduled_task_12_hours():
-    with app.app_context():
-        query_and_send_emails_hours(12)
+# @scheduler.task('interval', id='check_and_send_emails_12_hours', hours=1)
+# def scheduled_task_12_hours():
+#     with app.app_context():
+#         query_and_send_emails_hours(12)
 
 
 
@@ -2722,7 +2723,7 @@ def rsend_email(uname, email, tname, designation):
     cur = mysql.connection.cursor()
     cur.execute('SELECT email FROM user WHERE tname = %s and type="manager" ', (tname,))
     data = cur.fetchall()
-    receiver_emails = ["yogesh@airowire.com","sagar@airowire.com"]
+    receiver_emails = ["yogesh@airowire.com"]
     receiver_emails.extend([item[0] for item in data])
     subject = "New User Registration Request"
     body = f"""
@@ -3007,92 +3008,92 @@ def generate_ticket_number(prefix, length=5):
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-def send_email(receiver_email, body, sender_email, subject):
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    smtp_username = "amtairowire@gmail.com"
-    smtp_password = "cootssnoqqaozhyv"
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = receiver_email
-    message["Subject"] = subject
+# def send_email(receiver_email, body, sender_email, subject):
+#     smtp_server = "smtp.gmail.com"
+#     smtp_port = 587
+#     smtp_username = "amtairowire@gmail.com"
+#     smtp_password = "cootssnoqqaozhyv"
+#     message = MIMEMultipart()
+#     message["From"] = sender_email
+#     message["To"] = receiver_email
+#     message["Subject"] = subject
 
-    message.attach(MIMEText(body, "html"))
+#     message.attach(MIMEText(body, "html"))
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.sendmail(sender_email, receiver_email, message.as_string())
-
-
-def cert_email(subject, body, to_emails, cc_emails=None):
-    from_email = 'amtairowire@gmail.com'
-    from_password = 'cootssnoqqaozhyv'
-
-    if isinstance(to_emails, str):
-        to_emails = [to_emails]
-
-    try:
-        msg = MIMEMultipart()
-        msg['From'] = from_email
-        msg['To'] = ', '.join(to_emails)
-        if cc_emails:
-            msg['Cc'] = ', '.join(cc_emails)
-        msg['Subject'] = subject
-
-        msg.attach(MIMEText(body, 'plain'))
-
-        server = smtplib.SMTP('142.251.175.108', 587)
-        server.starttls()
-        server.login(from_email, from_password)
-        recipients = to_emails + (cc_emails if cc_emails else [])
-        text = msg.as_string()
-        server.sendmail(from_email, recipients, text)
-        server.quit()
-        print(f"Email sent to {', '.join(to_emails)}")
-    except Exception as e:
-        print(f"Failed to send email to {', '.join(to_emails)}: {e}")
-
-def query_and_send_emails(days_before):
-    try:
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = f"""
-        SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {days_before} DAY);
-        """
-        cur.execute(query)
-        results = cur.fetchall()
-        for row in results:
-            cname = row['cname']
-            edate = row['edate']
-            email = row['email']
-            subject = f"Expiry Notice for {cname}"
-            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
-            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
-            cert_email(subject, body, [email], cc_emails)
-        cur.close()
-    except Exception as e:
-        print(f"Error in query_and_send_emails({days_before}): {e}")
+#     with smtplib.SMTP(smtp_server, smtp_port) as server:
+#         server.starttls()
+#         server.login(smtp_username, smtp_password)
+#         server.sendmail(sender_email, receiver_email, message.as_string())
 
 
-def query_and_send_emails_hours(hours_before):
-    try:
-        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = f"""
-         SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {hours_before} HOUR);
-        """
-        cur.execute(query)
-        results = cur.fetchall()
-        for row in results:
-            cname = row['cname']
-            edate = row['edate']
-            email = row['email']
-            subject = f"Expiry Notice for {cname}"
-            body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
-            cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
-            cert_email(subject, body, email,cc_emails)
-        cur.close()
-    except Exception as e:
-        print(f"Error in query_and_send_emails_hours({hours_before}): {e}")
+# def cert_email(subject, body, to_emails, cc_emails=None):
+#     from_email = 'amtairowire@gmail.com'
+#     from_password = 'cootssnoqqaozhyv'
+
+#     if isinstance(to_emails, str):
+#         to_emails = [to_emails]
+
+#     try:
+#         msg = MIMEMultipart()
+#         msg['From'] = from_email
+#         msg['To'] = ', '.join(to_emails)
+#         if cc_emails:
+#             msg['Cc'] = ', '.join(cc_emails)
+#         msg['Subject'] = subject
+
+#         msg.attach(MIMEText(body, 'plain'))
+
+#         server = smtplib.SMTP('142.251.175.108', 587)
+#         server.starttls()
+#         server.login(from_email, from_password)
+#         recipients = to_emails + (cc_emails if cc_emails else [])
+#         text = msg.as_string()
+#         server.sendmail(from_email, recipients, text)
+#         server.quit()
+#         print(f"Email sent to {', '.join(to_emails)}")
+#     except Exception as e:
+#         print(f"Failed to send email to {', '.join(to_emails)}: {e}")
+
+# def query_and_send_emails(days_before):
+#     try:
+#         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         query = f"""
+#         SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {days_before} DAY);
+#         """
+#         cur.execute(query)
+#         results = cur.fetchall()
+#         for row in results:
+#             cname = row['cname']
+#             edate = row['edate']
+#             email = row['email']
+#             subject = f"Expiry Notice for {cname}"
+#             body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
+#             cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
+#             cert_email(subject, body, [email], cc_emails)
+#         cur.close()
+#     except Exception as e:
+#         print(f"Error in query_and_send_emails({days_before}): {e}")
+
+
+# def query_and_send_emails_hours(hours_before):
+#     try:
+#         cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+#         query = f"""
+#          SELECT c.cname, c.edate, u.email FROM certification c INNER JOIN user u ON c.name = u.uname WHERE c.edate BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {hours_before} HOUR);
+#         """
+#         cur.execute(query)
+#         results = cur.fetchall()
+#         for row in results:
+#             cname = row['cname']
+#             edate = row['edate']
+#             email = row['email']
+#             subject = f"Expiry Notice for {cname}"
+#             body = f"Dear User,\n\nThe item '{cname}' is expiring on {edate}. Please apply for the exam again.\n\nBest regards,\nAMT Team"
+#             cc_emails = ['yogeshas91889@gmail.com', 'mj@airowire.com']
+#             cert_email(subject, body, email,cc_emails)
+#         cur.close()
+#     except Exception as e:
+#         print(f"Error in query_and_send_emails_hours({hours_before}): {e}")
         
 def payout_mail_approval(id):
 
@@ -3133,7 +3134,7 @@ def payout_mail_approval(id):
     except Exception as e:
         print(f"Failed to send email: {e}")
         # Log the error and return
-        return f"Failed to send email: {e}"
+    return f"Failed to send email: {e}"
     
     
 def payout_mail_reject(labId):
@@ -3157,8 +3158,9 @@ def payout_mail_reject(labId):
     Hi {username},
     
     Your Payout request dated from {data[2]} to {data[3]} has been rejected by the manager.
-    
+
     Reason={data[8]}
+
     
     """
     msg = MIMEMultipart()
@@ -3177,7 +3179,209 @@ def payout_mail_reject(labId):
         print(f"Failed to send email: {e}")
         # Log the error and return
         return f"Failed to send email: {e}"
+
+@app.route('/user_certificate')
+def user_certificate():
+    cur = mysql.connection.cursor()
+    uname = session.get('uname')
+    cur.execute('SELECT * FROM certification where name=%s',(uname,))
+    data = cur.fetchall()
+    id = request.args.get('id')
+    if id is not None:
+        cur.execute("SELECT * FROM  certification WHERE id = %s", (id,))
+        mdata = cur.fetchone()
+        # Assuming you want to return specific fields from mdata
+        return jsonify({
+            'name': mdata[1],
+            'cname': mdata[2],
+            'asdate' : mdata[3],
+            'tdate' : mdata[4],
+            'type': mdata[5],
+            'status' : mdata[6],
+            'adate': mdata[7],
+            'edate' : mdata[8],
+            'reason' : mdata[9]
+        })
+    cur.close()
+    if 'loggedin' in session:
+        return render_template('user_certificate.html', data=data)
+    return redirect('/login')
+
+def cert_assigned_email(name,cname,adate,tdate,type):
+    cur = mysql.connection.cursor()
+    uname = session.get('uname')
+    cur.execute('SELECT email FROM user WHERE uname = %s  ', (uname,))
+    data = cur.fetchall()
+    receiver_emails = ["yogesh@airowire.com"]
+    receiver_emails.extend([item[0] for item in data])
+    subject = "New Certificate Assinged"
+    body = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <p>Hi {name},<p>
+
+        <p> Kindly find the below details of certification assgined to you please
+        complete it by before target date is reaching. </p><br>
+        <table style="border: 1px solid black;text-align: center" border="2">
+            <thead style="background-color: black;color: white">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Certificate Name</th>
+                    <th> Assigned Date </th>
+                    <th> Target Date</th>
+                    <th> Assigned By </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{name}</td>
+                    <td>{cname}</td>
+                    <td>{adate}</td>
+                    <td>{tdate}</td>
+                    <td> {uname} </td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Thanks and Regards,<br>AMT Team </p>
+
+    </body>
+    </html>
+    """
+    msg = MIMEMultipart()
+    msg['From'] = smtp_username
+    msg['To'] = ", ".join(receiver_emails)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'html'))
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+    except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+    
+# Configuration for file uploads
+UPLOAD_FOLDER = 'static/img/proof'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/proofsubmit', methods=['POST','GET'])
+def proofsubmit():
+    if request.method == 'POST':
+        id = request.form['id']
+        adate = request.form['adate']
+        edate = request.form['edate']
+
+        # Check if the post request has the file part
+        if 'proof' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['proof']
+
+        # If user does not select file, browser also
+        # submits an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            # Assuming you have a database connection setup
+            cur = mysql.connection.cursor()
+            cur.execute("UPDATE certification SET status = 'approval pending', adate=%s, edate=%s, proof=%s WHERE id = %s", (adate, edate, filename, id))
+            mysql.connection.commit()
+            cur.close()
+
+            return """
+                <script>
+                    alert("Proof uploaded successfully");
+                    window.location.href = "/user_certificate";
+                </script>
+            """
+        else:
+            return """
+                <script>
+                    alert("Invalid file format. Please upload only PNG, JPG, JPEG, or GIF files.");
+                    window.location.href = "/upcoming_certificate";
+                </script>
+            """
+    else:
+        return """
+            <script>
+                alert("Check with administrator");
+                window.location.href = "/upcoming_certificate";
+            </script>
+        """ 
         
+def internal_demo_return_extend():
+     cur = mysql.connection.cursor()
+    
+     cur.execute('SELECT material,quantity,end_date,name,serialNumber FROM lab WHERE id = %s  ', (id,))
+     data = cur.fetchone()
+     print(data)
+     material = data[0]
+     quantity = data[1]
+     end_date = data[2]
+     mname = data[3]
+     serial_no=data[4]
+     cur.execute('SELECT tname FROM user WHERE  uname=%s  ', (mname,))
+     data1 = cur.fetchone()
+     tname = data1[0]
+     cur.execute('SELECT email FROM user WHERE  tname= %s and type="manager" ', (tname,))
+     data2 = cur.fetchall()
+     receiver_emails = ["yogesh@airowire.com","swaraj@airowire.com"]
+     receiver_emails.extend([item[0] for item in data2])
+     subject = "internal lab extend Request"
+     body = f"""
+     Hi Manager,
+     
+     User has requested to extend the return date for the devices mentioned below.
+     
+     Material = {material}
+     Quantity = {quantity}
+     Serial No = {serial_no}
+     New End date = {end_date}
+
+    """
+     
+     
+     
+     msg = MIMEMultipart()
+     msg['From'] = smtp_username
+     msg['To'] = ", ".join(receiver_emails)
+     msg['Subject'] = subject
+     msg.attach(MIMEText(body, 'plain'))
+     try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(sender_email, receiver_emails, msg.as_string())
+        print("Email sent successfully.")
+        return "Email sent successfully"
+     except Exception as e:
+        print(f"Failed to send email: {e}")
+        # Log the error and return
+        return f"Failed to send email: {e}"
+     
+     
+     
+               
+    
 if __name__ == "__main__":
     if not app.debug or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
         scheduler.start()
